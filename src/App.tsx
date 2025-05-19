@@ -3,7 +3,9 @@ import "./App.css";
 function App() {
   return (
     <>
-      <div>hello world</div>
+      <div className="w-full h-screen flex justify-center items-center">
+        hello world
+      </div>
     </>
   );
 }
