@@ -34,7 +34,7 @@ export function RegisterForm() {
         password: values.password,
       });
 
-      if (response.success) {
+      if (!response.success) {
         setError("root", {
           type: "manual",
           message: "Something went wrong, please try again later",
