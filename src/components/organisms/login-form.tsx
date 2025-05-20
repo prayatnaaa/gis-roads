@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { loginSchema, type TLoginSchema } from "@/lib/login-types";
+import { useNavigate } from "react-router-dom";
+import { goLogin } from "@/actions/login";
 
 export function LoginForm() {
   const {
@@ -21,8 +23,31 @@ export function LoginForm() {
   } = useForm<TLoginSchema>({
     resolver: zodResolver(loginSchema),
   });
-  const onSubmit = (values: TLoginSchema) => {
+  const navigate = useNavigate();
+
+  const onSubmit = async (values: TLoginSchema) => {
     console.log(values);
+    try {
+      const response = await goLogin({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (!response.success) {
+        setError("root", {
+          type: "manual",
+          message: "Something went wrong, please try again later",
+        });
+        return;
+      }
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      setError("root", {
+        type: "manual",
+        message: "Something went wrong, please try again later",
+      });
+    }
   };
   return (
     <Card className="w-[350px]">

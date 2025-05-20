@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { registerSchema, type TRegisterSchema } from "@/lib/register-types";
+import { goRegister } from "@/actions/register";
+import { useNavigate } from "react-router-dom";
 
 export function RegisterForm() {
   const {
@@ -21,9 +23,34 @@ export function RegisterForm() {
   } = useForm<TRegisterSchema>({
     resolver: zodResolver(registerSchema),
   });
-  const onSubmit = (values: TRegisterSchema) => {
-    console.log(values);
+
+  const navigate = useNavigate();
+
+  const onSubmit = async (values: TRegisterSchema) => {
+    try {
+      const response = await goRegister({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (response.success) {
+        setError("root", {
+          type: "manual",
+          message: "Something went wrong, please try again later",
+        });
+        return;
+      }
+      navigate("/auth/login");
+    } catch (error) {
+      console.error(error);
+      setError("root", {
+        type: "manual",
+        message: "Something went wrong, please try again later",
+      });
+    }
   };
+
   return (
     <Card className="w-[350px]">
       <CardHeader>
