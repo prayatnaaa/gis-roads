@@ -25,10 +25,13 @@ export const goRegister = async ({
     formData.append("email", email);
     formData.append("password", password);
 
-    const response = await fetch(`${process.env.VITE_API_BASE_URL}/register`, {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/register`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     if (!response.ok) {
       return { success: false, message: "Something went wrong" };
@@ -43,6 +46,7 @@ export const goRegister = async ({
       user: data.meta.data,
     };
   } catch (error) {
+    console.error(error);
     return { success: false, message: error as string };
   }
 };

@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import Home from "./components/pages/home-page";
 import AddRoad from "./components/pages/add-road-page";
@@ -9,12 +9,16 @@ import React from "react";
 function App() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const location = useLocation();
 
   React.useEffect(() => {
-    if (!token) {
-      navigate("auth/login");
+    const authRoutes = ["/auth/login", "/auth/register"];
+    console.log("++++");
+
+    if (!token && !authRoutes.includes(location.pathname)) {
+      navigate("/auth/login");
     }
-  }, [token, navigate]);
+  }, [token, navigate, location]);
 
   return (
     <>

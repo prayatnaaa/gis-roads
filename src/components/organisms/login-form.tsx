@@ -26,13 +26,13 @@ export function LoginForm() {
   const navigate = useNavigate();
 
   const onSubmit = async (values: TLoginSchema) => {
-    console.log(values);
     try {
       const response = await goLogin({
         email: values.email,
         password: values.password,
       });
 
+      console.log(response);
       if (!response.success) {
         setError("root", {
           type: "manual",
@@ -40,6 +40,7 @@ export function LoginForm() {
         });
         return;
       }
+      localStorage.setItem("token", response.token!);
       navigate("/");
     } catch (error) {
       console.error(error);

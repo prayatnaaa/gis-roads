@@ -20,10 +20,12 @@ export const goLogin = async ({
     formData.append("email", email);
     formData.append("password", password);
 
-    const response = await fetch(`${process.env.VITE_API_BASE_URL}/register`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/login`, {
       method: "POST",
       body: formData,
     });
+
+    console.log(response);
 
     if (!response.ok) {
       return { success: false, message: "Something went wrong" };
@@ -38,6 +40,7 @@ export const goLogin = async ({
       token: data.meta.token,
     };
   } catch (error) {
+    console.error(error);
     return { success: false, message: error as string };
   }
 };
