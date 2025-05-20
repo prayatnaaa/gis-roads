@@ -1,23 +1,23 @@
-import { MapContainer, TileLayer } from "react-leaflet";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
+import Home from "./components/pages/home-page";
+import AddRoad from "./components/pages/add-road-page";
+import Register from "./components/pages/register-page";
+import Login from "./components/pages/login-page";
 
 function App() {
   return (
     <>
-      <div className="relative z-0 h-screen w-full">
-        <MapContainer
-          center={[-2.5489, 118.0149]}
-          zoom={6}
-          className="h-screen w-full"
-          style={{ zIndex: 0 }}
-          zoomControl={false}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-        </MapContainer>
-      </div>
+      <Router>
+        <div>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/add-road" element={<AddRoad />} />
+            <Route path="auth/register" element={<Register />} />
+            <Route path="auth/login" element={<Login />} />
+          </Routes>
+        </div>
+      </Router>
     </>
   );
 }
