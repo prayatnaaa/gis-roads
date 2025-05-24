@@ -13,7 +13,6 @@ function App() {
 
   React.useEffect(() => {
     const authRoutes = ["/auth/login", "/auth/register"];
-    console.log("++++");
 
     if (!token && !authRoutes.includes(location.pathname)) {
       navigate("/auth/login");

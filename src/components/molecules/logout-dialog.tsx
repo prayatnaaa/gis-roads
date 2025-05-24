@@ -9,16 +9,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "../ui/button";
+import React from "react";
+import { boolean } from "zod";
+import { useNavigate } from "react-router-dom";
 
 export function LogoutDialog() {
+  const [isOpen, setOpen] = React.useState(false);
+  const navigate = useNavigate();
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <h1 className="text-red-700 hover:font-semibold hover:cursor-pointer">
+      <AlertDialogTrigger asChild onClick={() => setOpen(true)}>
+        <h1 className="text-red-600 hover:font-semibold hover:cursor-pointer">
           Log out
         </h1>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className={`${isOpen ? "block" : "hidden"}`}>
         <AlertDialogHeader>
           <AlertDialogTitle>Log out?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -32,6 +38,7 @@ export function LogoutDialog() {
             className="bg-red-700"
             onClick={() => {
               localStorage.removeItem("token");
+              navigate("auth/login");
             }}
           >
             Continue

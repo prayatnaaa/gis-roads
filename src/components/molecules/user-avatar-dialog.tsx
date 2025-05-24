@@ -24,11 +24,7 @@ export function UserAvatarDialog() {
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        alignOffset={10}
-        collisionPadding={10}
-        className="w-56"
-      >
+      <DropdownMenuContent collisionPadding={10} className="w-56">
         <DropdownMenuLabel className="font-semibold">
           My Account
         </DropdownMenuLabel>
