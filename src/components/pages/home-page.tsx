@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
+// import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
 import { RegionSheet } from "../molecules/region-sheet";
 import React from "react";
 import { getAllRegion } from "@/actions/get-all-region";
@@ -17,9 +17,7 @@ function Home() {
 
   const fetchRegionData = async () => {
     try {
-      console.log("TOKEN:", token);
       const region = await getAllRegion(token as string);
-      console.log("====================");
       if (region.success && region.data) {
         setRegionData(region.data);
       } else {
@@ -50,8 +48,8 @@ function Home() {
           </div>
         </div>
         <MapContainer
-          center={[-2.5489, 118.0149]}
-          zoom={6}
+          center={[-8.409518, 115.188919]}
+          zoom={10}
           className="h-screen w-full"
           style={{ zIndex: 0 }}
           zoomControl={false}
