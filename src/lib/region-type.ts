@@ -60,3 +60,15 @@ export type GetVillageProps = GetPlacesProps<{
 export type GetRegencyProps = GetPlacesProps<{
   kabupaten: PlaceValueProps[];
 }>;
+
+export type GetExistingRoadProps = GetPlacesProps<{
+  exsisting: PlaceValueProps[];
+}>;
+
+export type GetRoadTypeProps = GetPlacesProps<{
+  types: PlaceValueProps[];
+}>;
+
+export type GetRoadConditionProps = GetPlacesProps<{
+  condition: PlaceValueProps[];
+}>;

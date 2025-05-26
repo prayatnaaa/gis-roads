@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import type { LatLngLiteral } from "leaflet";
 import ClickableMap from "../atoms/polyline";
 import AddRoadForm from "./add-road-form";
+import L from "leaflet";
 
 const AddRoadMaps = () => {
   const [positions, setPositions] = React.useState<LatLngLiteral[]>([]);
@@ -16,6 +17,18 @@ const AddRoadMaps = () => {
   const handleClearPoints = () => {
     setPositions([]);
   };
+
+  const getPolylineLength = (positions: LatLngLiteral[]) => {
+    let total = 0;
+    for (let i = 0; i < positions.length - 1; i++) {
+      const from = L.latLng(positions[i]);
+      const to = L.latLng(positions[i + 1]);
+      total += from.distanceTo(to);
+    }
+    return total;
+  };
+
+  console.log(getPolylineLength(positions));
 
   return (
     <div className="w-full h-screen flex flex-row">

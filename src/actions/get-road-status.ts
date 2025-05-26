@@ -1,4 +1,10 @@
-export const getRoadType = async (token: string) => {
+import type {
+  GetExistingRoadProps,
+  GetRoadConditionProps,
+  GetRoadTypeProps,
+} from "@/lib/region-type";
+
+export const getRoadType = async (token: string): Promise<GetRoadTypeProps> => {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL}/mjenisjalan`,
@@ -11,22 +17,36 @@ export const getRoadType = async (token: string) => {
     );
 
     if (!response.ok) {
-      return { message: "Failed to fetch", success: false };
+      return {
+        message: "Failed to fetch",
+        status: "false",
+        code: response.status,
+      };
     }
 
     const data = await response.json();
 
     return {
-      success: true,
+      status: "success",
+      code: response.status,
       message: "Success to retrieved road types",
-      data: data.jenisjalan,
+      data: {
+        types: data.eksisting.map(
+          (item: { id: number; jenisjalan: string }) => ({
+            id: item.id,
+            value: item.jenisjalan,
+          })
+        ),
+      },
     };
   } catch (error) {
-    return { message: error, success: false };
+    return { message: error as string, code: 405, status: "false" };
   }
 };
 
-export const getExistingRoad = async (token: string) => {
+export const getExistingRoad = async (
+  token: string
+): Promise<GetExistingRoadProps> => {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL}/meksisting`,
@@ -39,17 +59,71 @@ export const getExistingRoad = async (token: string) => {
     );
 
     if (!response.ok) {
-      return { message: "Failed to fetch", success: false };
+      return {
+        message: "Failed to fetch",
+        status: "false",
+        code: response.status,
+      };
     }
 
     const data = await response.json();
 
     return {
-      success: true,
-      message: "Success to retrieved road types",
-      data: data.eksisting,
+      status: "success",
+      code: response.status,
+      message: "Success to retrieved existing roads",
+      data: {
+        exsisting: data.eksisting.map(
+          (item: { id: number; eksisting: string }) => ({
+            id: item.id,
+            value: item.eksisting,
+          })
+        ),
+      },
     };
   } catch (error) {
-    return { message: error, success: false };
+    return { message: error as string, code: 405, status: "false" };
+  }
+};
+
+export const getRoadCondition = async (
+  token: string
+): Promise<GetRoadConditionProps> => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/mkondisi`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return {
+        message: "Failed to fetch",
+        status: "false",
+        code: response.status,
+      };
+    }
+
+    const data = await response.json();
+
+    return {
+      status: "success",
+      code: response.status,
+      message: "Success to retrieved existing roads",
+      data: {
+        condition: data.eksisting.map(
+          (item: { id: number; kondisi: string }) => ({
+            id: item.id,
+            value: item.kondisi,
+          })
+        ),
+      },
+    };
+  } catch (error) {
+    return { message: error as string, code: 405, status: "false" };
   }
 };
