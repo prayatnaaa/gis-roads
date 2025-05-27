@@ -17,6 +17,7 @@ import { Button } from "../ui/button";
 import { addRoad } from "@/actions/add-road";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ChevronLeft } from "lucide-react";
 
 type AddRoadFormProps = {
   paths: { lat: number; lng: number }[];
@@ -144,7 +145,17 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
 
   return (
     <div className="w-1/2 h-screen p-4 flex flex-col gap-8">
-      <h1 className="text-lg font-bold text-white">Add Road</h1>
+      <div className="flex gap-2 items-center">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hover:cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          <ChevronLeft />
+        </Button>
+        <h1 className="text-lg font-bold">Add Road</h1>
+      </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-4"

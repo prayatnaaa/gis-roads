@@ -5,6 +5,7 @@ import type { LatLngLiteral } from "leaflet";
 import ClickableMap from "../atoms/polyline";
 import AddRoadForm from "./add-road-form";
 import L from "leaflet";
+import { CustomAlert } from "../atoms/custom-alert";
 
 const AddRoadMaps = () => {
   const [positions, setPositions] = React.useState<LatLngLiteral[]>([]);
@@ -30,6 +31,11 @@ const AddRoadMaps = () => {
 
   return (
     <div className="w-full h-screen flex flex-row">
+      <div className="absolute bottom-[40px] right-[40px] z-20">
+        {positions.length < 2 && (
+          <CustomAlert desc="There has to be at least two points" />
+        )}
+      </div>
       <AddRoadForm paths={positions} length={getPolylineLength(positions)} />
       <div className="relative z-0 w-full flex-shrink p-8">
         <MapContainer
