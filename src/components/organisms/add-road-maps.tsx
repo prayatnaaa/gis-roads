@@ -28,11 +28,9 @@ const AddRoadMaps = () => {
     return total;
   };
 
-  console.log(getPolylineLength(positions));
-
   return (
     <div className="w-full h-screen flex flex-row">
-      <AddRoadForm />
+      <AddRoadForm paths={positions} length={getPolylineLength(positions)} />
       <div className="relative z-0 w-full flex-shrink p-8">
         <MapContainer
           center={[-8.409518, 115.188919]}

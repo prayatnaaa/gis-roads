@@ -1,39 +1,34 @@
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 // import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
-import { RegionSheet } from "../molecules/region-sheet";
 import React from "react";
-import { getAllRegion } from "@/actions/get-all-region";
-import type { AllRegionProps } from "@/lib/region-type";
-import { data } from "react-router-dom";
 import { LogoutDialog } from "../molecules/logout-dialog";
+import { getAllRoads, type Road } from "@/actions/get-all-roads";
 
 function Home() {
-  const [regionData, setRegionData] = React.useState<AllRegionProps | null>(
-    null
-  );
+  const [roadData, setRoadData] = React.useState<Road[] | null>(null);
   const token = localStorage.getItem("token");
-  console.log(token);
 
-  const fetchRegionData = async () => {
+  const fetchRoadData = async () => {
     try {
-      const region = await getAllRegion(token as string);
-      if (region.success && region.data) {
-        setRegionData(region.data);
-      } else {
-        console.error("Failed to fetch region:", region.message);
+      if (!token) {
+        console.error("Token not found");
+        return;
       }
+      const roads = await getAllRoads(token);
+      console.log("data", roads);
+      setRoadData(roads);
     } catch (err) {
       console.error("Fetch error:", err);
     }
   };
 
   React.useEffect(() => {
-    fetchRegionData();
+    fetchRoadData();
   }, [token]);
 
-  if (data == null) {
-    return;
+  if (roadData === null) {
+    return <div>Loading roads...</div>;
   }
 
   return (
@@ -44,7 +39,6 @@ function Home() {
             {/* TODO: FIX the User menu dialog */}
             {/* <UserAvatarDialog /> */}
             <LogoutDialog />
-            {regionData && <RegionSheet data={regionData!} />}
           </div>
         </div>
         <MapContainer
@@ -58,6 +52,13 @@ function Home() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+
+          {roadData.length > 0 &&
+            roadData.map((data) =>
+              Array.isArray(data.paths) ? (
+                <Polyline key={data.id} positions={data.paths} />
+              ) : null
+            )}
         </MapContainer>
       </div>
     </>

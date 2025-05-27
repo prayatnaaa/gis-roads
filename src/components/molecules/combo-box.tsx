@@ -21,11 +21,16 @@ import {
 import type { PlaceValueProps } from "@/lib/region-type";
 
 type ComboboxProps = {
+  name?: string;
   properties: PlaceValueProps[];
   onChange?: (selected: PlaceValueProps) => void;
 };
 
-export function Combobox({ properties, onChange }: ComboboxProps) {
+export function Combobox({
+  name = "Select...",
+  properties,
+  onChange,
+}: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -36,19 +41,21 @@ export function Combobox({ properties, onChange }: ComboboxProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className={`w-[200px] justify-between ${
+            value ? "text-white" : "opacity-60"
+          }`}
         >
           {value
             ? properties.find((framework) => framework.value === value)?.value
-            : "Select framework..."}
+            : name}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." className="h-9" />
+          <CommandInput placeholder="Search..." className="h-9" />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>Not found.</CommandEmpty>
             <CommandGroup>
               {properties.map((framework) => (
                 <CommandItem
