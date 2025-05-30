@@ -5,20 +5,23 @@ import { devtools, persist } from "zustand/middleware";
 
 interface RegionState extends AllRegionProps {
   isError: boolean;
+  isLoaded: boolean;
   fetchRegion: (token: string) => void;
 }
 
 export const useRegionStore = create<RegionState>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         provinsi: [],
         kecamatan: [],
         kabupaten: [],
         desa: [],
         isError: false,
+        isLoaded: false,
         fetchRegion: async (token: string) => {
           try {
+            if (get().isLoaded) return;
             const response = await getAllRegion(token);
 
             if (!response.success) {
@@ -32,6 +35,7 @@ export const useRegionStore = create<RegionState>()(
               kecamatan: response.data?.kecamatan,
               desa: response.data?.desa,
               isError: false,
+              isLoaded: true,
             });
           } catch (error) {
             set({ isError: true });
@@ -45,6 +49,7 @@ export const useRegionStore = create<RegionState>()(
           kabupaten: state.kabupaten,
           kecamatan: state.kecamatan,
           desa: state.desa,
+          isLoaded: state.isLoaded,
         }),
       }
     )

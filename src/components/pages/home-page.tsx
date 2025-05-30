@@ -1,34 +1,33 @@
 import { MapContainer, Polyline, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 // import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
-import React from "react";
 import { LogoutDialog } from "../molecules/logout-dialog";
-import { getAllRoads, type Road } from "@/actions/get-all-roads";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import DeleteRoadButton from "../molecules/delete-road-button";
 import { TabularRoadData } from "../organisms/tabular-road-data";
 import { roadTableColumns, type RoadTable } from "@/lib/road-table-columns";
 import { useRegionStore } from "@/stores/region-stores";
+import { useRoadStore } from "@/stores/road-data-stores";
 
 function Home() {
-  const [roadData, setRoadData] = React.useState<Road[] | null>(null);
+  const roads = useRoadStore((state) => state.roads);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const desa = useRegionStore((state) => state.desa);
 
   const tableData: RoadTable[] =
-    roadData?.map((road) => {
+    roads?.map((road) => {
       const desaName =
         desa.find((d) => d.id === road.desa_id)?.desa || "Unknown Desa";
       const status =
         road.kondisi_id == 1
-          ? "Good"
+          ? "Baik"
           : road.kondisi_id == 2
-          ? "Bad"
+          ? "Sedang"
           : road.kondisi_id == 3
-          ? "Unknown"
-          : "Wth";
+          ? "Rusak"
+          : "Tidak tahu";
       return {
         id: road.id,
         name: road.nama_ruas,
@@ -37,25 +36,25 @@ function Home() {
       };
     }) ?? [];
 
-  const fetchRoadData = async () => {
-    try {
-      if (!token) {
-        console.error("Token not found");
-        navigate("auth/login");
-        return;
-      }
-      const roads = await getAllRoads(token);
-      setRoadData(roads);
-    } catch (err) {
-      console.error("Fetch error:", err);
-    }
-  };
+  // const fetchRoadData = async () => {
+  //   try {
+  //     if (!token) {
+  //       console.error("Token not found");
+  //       navigate("auth/login");
+  //       return;
+  //     }
+  //     const roads = await getAllRoads(token);
+  //     setRoadData(roads);
+  //   } catch (err) {
+  //     console.error("Fetch error:", err);
+  //   }
+  // };
 
-  React.useEffect(() => {
-    fetchRoadData();
-  }, [token]);
+  // React.useEffect(() => {
+  //   fetchRoadData();
+  // }, [token]);
 
-  if (roadData === null) {
+  if (roads === null) {
     return <div>Loading roads...</div>;
   }
 
@@ -92,8 +91,8 @@ function Home() {
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-            {roadData.length > 0 &&
-              roadData.map((data) =>
+            {roads.length > 0 &&
+              roads.map((data) =>
                 Array.isArray(data.paths) ? (
                   <Polyline key={data.id} positions={data.paths}>
                     <Popup>
