@@ -23,10 +23,9 @@ function App() {
 
   React.useEffect(() => {
     if (token) {
-      console.log("Calling fetchRegion with token:", token);
       region(token);
     }
-  }, [token]);
+  }, []);
 
   return (
     <>

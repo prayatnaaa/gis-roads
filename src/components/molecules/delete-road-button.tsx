@@ -33,9 +33,9 @@ const DeleteRoadButton = ({ token, id }: DeleteButtonProps) => {
     <div>
       <Dialog>
         <DialogTrigger>
-          <Button className="z-10 bg-red-700 text-white hover:cursor-pointer hover:bg-red-800">
+          <p className="text-sm text-red-600 hover:cursor-pointer hover:font-semibold">
             Delete
-          </Button>
+          </p>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
