@@ -28,12 +28,18 @@ const AddRoadMaps = () => {
     }
     return total;
   };
+  const lengthInMeters = Math.round(getPolylineLength(positions));
 
   return (
     <div className="w-full h-screen flex flex-row">
       <div className="absolute bottom-[40px] right-[40px] z-20">
         {positions.length < 2 && (
           <CustomAlert desc="There has to be at least two points" />
+        )}
+        {positions.length >= 2 && (
+          <div className="bg-black text-white px-4 py-2 rounded-lg text-sm">
+            Length - {lengthInMeters} meter
+          </div>
         )}
       </div>
       <AddRoadForm paths={positions} length={getPolylineLength(positions)} />

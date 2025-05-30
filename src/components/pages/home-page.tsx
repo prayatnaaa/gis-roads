@@ -17,10 +17,10 @@ function Home() {
     try {
       if (!token) {
         console.error("Token not found");
+        navigate("auth/login");
         return;
       }
       const roads = await getAllRoads(token);
-      console.log("data", roads);
       setRoadData(roads);
     } catch (err) {
       console.error("Fetch error:", err);
@@ -29,7 +29,7 @@ function Home() {
 
   React.useEffect(() => {
     fetchRoadData();
-  }, [token, roadData]);
+  }, [token]);
 
   if (roadData === null) {
     return <div>Loading roads...</div>;

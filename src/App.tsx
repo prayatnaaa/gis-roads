@@ -5,11 +5,13 @@ import AddRoad from "./components/pages/add-road-page";
 import Register from "./components/pages/register-page";
 import Login from "./components/pages/login-page";
 import React from "react";
+import { useRegionStore } from "./stores/region-stores";
 
 function App() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const location = useLocation();
+  const region = useRegionStore((state) => state.fetchRegion);
 
   React.useEffect(() => {
     const authRoutes = ["/auth/login", "/auth/register"];
@@ -18,6 +20,13 @@ function App() {
       navigate("/auth/login");
     }
   }, [token, navigate, location]);
+
+  React.useEffect(() => {
+    if (token) {
+      console.log("Calling fetchRegion with token:", token);
+      region(token);
+    }
+  }, [token]);
 
   return (
     <>

@@ -2,7 +2,6 @@ import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Combobox } from "../molecules/combo-box";
-import { getDistrict, getRegency, getVillage } from "@/actions/get-places";
 import {
   getExistingRoad,
   getRoadCondition,
@@ -18,6 +17,7 @@ import { addRoad } from "@/actions/add-road";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
+import { useRegionStore } from "@/stores/region-stores";
 
 type AddRoadFormProps = {
   paths: { lat: number; lng: number }[];
@@ -35,15 +35,13 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
     resolver: zodResolver(addRoadSchema),
   });
 
-  const [regencyValues, setRegencyValues] = React.useState<PlaceValueProps[]>(
-    []
-  );
-  const [districtValues, setDistrictValues] = React.useState<PlaceValueProps[]>(
-    []
-  );
-  const [villageValues, setVillageValues] = React.useState<PlaceValueProps[]>(
-    []
-  );
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const kabupaten = useRegionStore((state) => state.kabupaten);
+  const kecamatan = useRegionStore((state) => state.kecamatan);
+  const desa = useRegionStore((state) => state.desa);
+
   const [existingValue, setExistingValue] = React.useState<PlaceValueProps[]>(
     []
   );
@@ -54,20 +52,6 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
 
   const [regencyId, setRegencyId] = React.useState<number | null>(null);
   const [districtId, setDistrictId] = React.useState<number | null>(null);
-  const navigate = useNavigate();
-
-  const token = localStorage.getItem("token");
-
-  React.useEffect(() => {
-    if (!token) return;
-    (async () => {
-      const response = await getRegency(token);
-      const regencies =
-        response.data?.kabupaten.map((r) => ({ id: r.id, value: r.value })) ||
-        [];
-      setRegencyValues(regencies);
-    })();
-  }, [token]);
 
   React.useEffect(() => {
     if (!token) return;
@@ -79,29 +63,6 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
       setExistingValue(existing);
     })();
   }, [token]);
-
-  React.useEffect(() => {
-    if (!token || regencyId === null) return;
-    (async () => {
-      const response = await getDistrict(token, regencyId);
-      const districts =
-        response.data?.kecamatan.map((d) => ({ id: d.id, value: d.value })) ||
-        [];
-      setDistrictValues(districts);
-      setVillageValues([]);
-      setValue("village_id", undefined as any);
-    })();
-  }, [token, regencyId, setValue]);
-
-  React.useEffect(() => {
-    if (!token || districtId === null) return;
-    (async () => {
-      const response = await getVillage(token, districtId);
-      const villages =
-        response.data?.desa.map((v) => ({ id: v.id, value: v.value })) || [];
-      setVillageValues(villages);
-    })();
-  }, [token, districtId]);
 
   React.useEffect(() => {
     if (!token) return;
@@ -124,6 +85,16 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
     })();
   }, [token]);
 
+  const filteredDistricts = React.useMemo(
+    () => kecamatan.filter((k) => k.kab_id === regencyId),
+    [kecamatan, regencyId]
+  );
+
+  const filteredVillages = React.useMemo(
+    () => desa.filter((d) => d.kec_id === districtId),
+    [desa, districtId]
+  );
+
   const triggerSubmit = () => {
     setValue("paths", paths);
     setValue("length", length);
@@ -131,7 +102,6 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
   };
 
   const onSubmit = async (data: AddRoadFormData) => {
-    console.log("Submitting data:", data);
     if (paths.length < 2) {
       console.log("path empty");
       return;
@@ -156,41 +126,51 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
         </Button>
         <h1 className="text-lg font-bold">Add Road</h1>
       </div>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-4"
       >
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row justify-between">
           <div className="flex flex-col gap-4">
             <Combobox
               name="Select regency..."
-              properties={regencyValues}
+              properties={kabupaten.map((k) => ({
+                id: k.id,
+                value: k.kabupaten,
+              }))}
               onChange={(selected) => {
                 setRegencyId(selected.id);
                 setDistrictId(null);
-                setDistrictValues([]);
-                setVillageValues([]);
                 setValue("village_id", undefined as any);
               }}
             />
-            {districtValues.length > 0 && (
+
+            {filteredDistricts.length > 0 && (
               <Combobox
                 name="Select district..."
-                properties={districtValues}
+                properties={filteredDistricts.map((d) => ({
+                  id: d.id,
+                  value: d.kecamatan,
+                }))}
                 onChange={(selected) => {
                   setDistrictId(selected.id);
-                  setVillageValues([]);
                   setValue("village_id", undefined as any);
                 }}
               />
             )}
-            {villageValues.length > 0 && (
+
+            {filteredVillages.length > 0 && (
               <Combobox
                 name="Select village..."
-                properties={villageValues}
+                properties={filteredVillages.map((v) => ({
+                  id: v.id,
+                  value: v.desa,
+                }))}
                 onChange={(selected) => setValue("village_id", selected.id)}
               />
             )}
+
             {errors.village_id && (
               <p className="text-red-500 text-sm">
                 {errors.village_id.message}
@@ -212,6 +192,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                 )}
               />
             )}
+
             {errors.existing_id && (
               <p className="text-red-500 text-sm">
                 {errors.existing_id.message}
@@ -231,6 +212,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                 )}
               />
             )}
+
             {errors.type_id && (
               <p className="text-red-500 text-sm">{errors.type_id.message}</p>
             )}
@@ -248,6 +230,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                 )}
               />
             )}
+
             {errors.condition_id && (
               <p className="text-red-500 text-sm">
                 {errors.condition_id.message}
@@ -260,14 +243,12 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
           <Label htmlFor="road-name" className="opacity-60">
             Road's name
           </Label>
-
           <Input
             id="road-name"
             type="text"
             placeholder="Set the road's name"
             {...register("road_name")}
           />
-
           {errors.road_name && (
             <p className="text-red-500 text-sm">{errors.road_name.message}</p>
           )}
@@ -277,7 +258,6 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
           <Label htmlFor="road-desc" className="opacity-60">
             Description
           </Label>
-
           <Textarea
             id="road-desc"
             placeholder="Set description for the road"
@@ -302,10 +282,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
           className="mt-2 hover:cursor-pointer"
           type="button"
           disabled={isSubmitting}
-          onClick={() => {
-            triggerSubmit();
-            console.log(errors);
-          }}
+          onClick={triggerSubmit}
         >
           Submit
         </Button>
