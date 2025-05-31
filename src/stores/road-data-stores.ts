@@ -1,4 +1,4 @@
-import { getAllRoads, type Road } from "@/actions/get-all-roads";
+import { getAllRoads, type Road } from "@/actions/get-roads";
 import { create } from "zustand";
 
 interface RoadState {

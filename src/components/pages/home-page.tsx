@@ -9,12 +9,15 @@ import { useRegionStore } from "@/stores/region-stores";
 import { useRoadStore } from "@/stores/road-data-stores";
 import HomeMaps from "../organisms/home-maps";
 import { useLocationStore } from "@/stores/map-location-stores";
+import { ViewedLocationInfo } from "../molecules/viewed-location-info";
 
 function Home() {
   const roads = useRoadStore((state) => state.roads);
   const navigate = useNavigate();
   const desa = useRegionStore((state) => state.desa);
   const location = useLocationStore((state) => state.location);
+  const roadID = useLocationStore((state) => state.id);
+  const isSelected = useLocationStore((state) => state.isSelected);
 
   const tableData: RoadTable[] =
     roads?.map((road) => {
@@ -46,6 +49,8 @@ function Home() {
             <LogoutDialog />
           </div>
         </div>
+
+        {isSelected && <ViewedLocationInfo id={roadID} />}
 
         <div className="absolute bottom-2.5 right-2.5 z-10">
           <Button

@@ -29,7 +29,7 @@ const ViewLocationButton = ({ token, id }: ViewLocationProps) => {
         { lat: 0, lng: 0 }
       );
 
-      setLocation(lat, lng);
+      setLocation(lat, lng, road.id as unknown as string);
     } catch (err) {
       console.error("Failed to set location from road:", err);
     }
