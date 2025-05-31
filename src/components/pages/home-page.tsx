@@ -1,20 +1,20 @@
-import { MapContainer, Polyline, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 // import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
 import { LogoutDialog } from "../molecules/logout-dialog";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
-import DeleteRoadButton from "../molecules/delete-road-button";
 import { TabularRoadData } from "../organisms/tabular-road-data";
 import { roadTableColumns, type RoadTable } from "@/lib/road-table-columns";
 import { useRegionStore } from "@/stores/region-stores";
 import { useRoadStore } from "@/stores/road-data-stores";
+import HomeMaps from "../organisms/home-maps";
+import { useLocationStore } from "@/stores/map-location-stores";
 
 function Home() {
   const roads = useRoadStore((state) => state.roads);
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const desa = useRegionStore((state) => state.desa);
+  const location = useLocationStore((state) => state.location);
 
   const tableData: RoadTable[] =
     roads?.map((road) => {
@@ -35,28 +35,6 @@ function Home() {
         condition: status,
       };
     }) ?? [];
-
-  // const fetchRoadData = async () => {
-  //   try {
-  //     if (!token) {
-  //       console.error("Token not found");
-  //       navigate("auth/login");
-  //       return;
-  //     }
-  //     const roads = await getAllRoads(token);
-  //     setRoadData(roads);
-  //   } catch (err) {
-  //     console.error("Fetch error:", err);
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   fetchRoadData();
-  // }, [token]);
-
-  if (roads === null) {
-    return <div>Loading roads...</div>;
-  }
 
   return (
     <>
@@ -82,33 +60,7 @@ function Home() {
           <div className="w-full items-center">
             <TabularRoadData data={tableData} columns={roadTableColumns} />
           </div>
-          <MapContainer
-            center={[-8.409518, 115.188919]}
-            zoom={10}
-            className="h-screen w-full"
-            style={{ zIndex: 0 }}
-            zoomControl={false}
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-            {roads.length > 0 &&
-              roads.map((data) =>
-                Array.isArray(data.paths) ? (
-                  <Polyline key={data.id} positions={data.paths}>
-                    <Popup>
-                      <div className="w-full min-w-full h-fit max-h-screen flex flex-col items-center justify-between">
-                        <h1 className="font-semibold">{data.nama_ruas}</h1>
-                        <p>{data.keterangan}</p>
-                        <DeleteRoadButton
-                          token={token as string}
-                          id={data.id}
-                        />
-                      </div>
-                    </Popup>
-                  </Polyline>
-                ) : null
-              )}
-          </MapContainer>
+          <HomeMaps location={location} />
         </div>
       </div>
     </>

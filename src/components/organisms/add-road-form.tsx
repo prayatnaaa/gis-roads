@@ -102,14 +102,10 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
   };
 
   const onSubmit = async (data: AddRoadFormData) => {
-    if (paths.length < 2) {
-      console.log("path empty");
-      return;
-    }
     const response = await addRoad(data, token);
     if (response.code == 200) {
       toast("Road has been created");
-      navigate("/");
+      await navigate("/");
     }
   };
 

@@ -1,3 +1,4 @@
+import ViewLocationButton from "@/components/atoms/view-location-button";
 import DeleteRoadButton from "@/components/molecules/delete-road-button";
 
 import type { ColumnDef } from "@tanstack/react-table";
@@ -35,6 +36,7 @@ export const roadTableColumns: ColumnDef<RoadTable>[] = [
       return (
         <div className="w-full mx-auto flex flex-row gap-4 justify-end">
           <DeleteRoadButton token={token as string} id={row.original.id} />
+          <ViewLocationButton token={token as string} id={row.original.id} />
         </div>
       );
     },
