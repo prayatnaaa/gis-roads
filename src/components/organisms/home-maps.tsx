@@ -22,11 +22,12 @@ const HomeMaps = ({ location }: HomeMapsProps) => {
   const roads = useRoadStore((state) => state.roads);
   const setLocId = useLocationStore((state) => state.setLocation);
   const selectedLocId = useLocationStore.getState().id;
+  const zoomControl = useLocationStore.getState().zoomLevel;
 
   return (
     <MapContainer
       center={location}
-      zoom={13}
+      zoom={zoomControl}
       zoomControl={false}
       style={{ height: "100%", width: "100%" }}
       className="z-0"

@@ -32,11 +32,9 @@ export function ViewedLocationInfo({ id }: { id: string }) {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">
-          <div>{road.desa_id}</div>
           <div>{road.kondisi_id}</div>
           <div>{road.keterangan}</div>
           <div>{road.eksisting_id}</div>
-          <div>{road.id}</div>
           <div>{road.jenisjalan_id}</div>
           <div>{road.kode_ruas}</div>
           <div>{road.lebar}</div>
