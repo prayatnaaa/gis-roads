@@ -17,8 +17,10 @@ function App() {
   const isRegionLoaded = useRegionStore((state) => state.isLoaded);
 
   React.useEffect(() => {
-    if (token) road(token);
-  }, [road, token]);
+    if (token && location.pathname == "/") {
+      road(token);
+    }
+  }, [location.pathname]);
 
   React.useEffect(() => {
     const authRoutes = ["/auth/login", "/auth/register"];
@@ -29,7 +31,9 @@ function App() {
   }, [token, navigate, location]);
 
   React.useEffect(() => {
-    if (token && !isRegionLoaded) region(token);
+    if (token && !isRegionLoaded) {
+      region(token);
+    }
   }, []);
 
   return (

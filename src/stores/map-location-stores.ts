@@ -16,6 +16,5 @@ export const useLocationStore = create<LocationStore>((set) => ({
   isSelected: false,
   setLocation: (lat, lng, id) =>
     set(() => ({ location: [lat, lng], isSelected: true, id: id })),
-  resetLocation: () =>
-    set(() => ({ location: DEFAULT_LOCATION, isSelected: false, id: "null" })),
+  resetLocation: () => set(() => ({ isSelected: false, id: "null" })),
 }));

@@ -36,7 +36,7 @@ function Home() {
 
   return (
     <div className="flex flex-row-reverse gap-8 w-full h-screen p-8 overflow-hidden">
-      <div className="flex-1 relative border rounded-md overflow-hidden">
+      <div className="flex-1 relative border rounded-lg overflow-hidden">
         {isSelected && <ViewedLocationInfo id={roadID} />}
         <HomeMaps location={location} />
       </div>

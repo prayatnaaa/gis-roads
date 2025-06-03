@@ -2,22 +2,17 @@ import React from "react";
 import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { LatLngLiteral } from "leaflet";
-import ClickableMap from "../atoms/polyline";
 import AddRoadForm from "./add-road-form";
-import L from "leaflet";
 import { CustomAlert } from "../atoms/custom-alert";
+import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+import "leaflet/dist/leaflet.css";
+import * as L from "leaflet";
+import "leaflet";
+import "@geoman-io/leaflet-geoman-free";
+import { GeomanPolyline } from "../atoms/polyline";
 
 const AddRoadMaps = () => {
   const [positions, setPositions] = React.useState<LatLngLiteral[]>([]);
-
-  const handleAddPoint = (latlng: LatLngLiteral) => {
-    console.log(positions);
-    setPositions((prev) => [...prev, latlng]);
-  };
-
-  const handleClearPoints = () => {
-    setPositions([]);
-  };
 
   const getPolylineLength = (positions: LatLngLiteral[]) => {
     let total = 0;
@@ -29,6 +24,7 @@ const AddRoadMaps = () => {
     return total;
   };
   const lengthInMeters = Math.round(getPolylineLength(positions));
+  console.log(positions);
 
   return (
     <div className="w-full h-screen flex flex-row">
@@ -36,13 +32,8 @@ const AddRoadMaps = () => {
         {positions.length < 2 && (
           <CustomAlert desc="There has to be at least two points" />
         )}
-        {positions.length >= 2 && (
-          <div className="bg-black text-white px-4 py-2 rounded-lg text-sm">
-            Length - {lengthInMeters} meter
-          </div>
-        )}
       </div>
-      <AddRoadForm paths={positions} length={getPolylineLength(positions)} />
+      <AddRoadForm paths={positions} length={lengthInMeters} />
       <div className="relative z-0 w-full flex-shrink p-8">
         <MapContainer
           center={[-8.409518, 115.188919]}
@@ -55,10 +46,8 @@ const AddRoadMaps = () => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <ClickableMap
-            onClick={handleAddPoint}
-            onRightClick={handleClearPoints}
-          />
+          <GeomanPolyline onDraw={(latlngs) => setPositions(latlngs)} />
+
           {positions.length > 0 && (
             <Polyline positions={positions} color="black" />
           )}

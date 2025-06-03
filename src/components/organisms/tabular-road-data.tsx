@@ -18,19 +18,22 @@ import {
 import { Input } from "../ui/input";
 import React from "react";
 import AddRoadButton from "../atoms/add-road-button";
+import { useLocationStore } from "@/stores/map-location-stores";
+import type { RoadTable } from "@/lib/road-table-columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function TabularRoadData<TData, TValue>({
+export function TabularRoadData({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<RoadTable, unknown>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const selectedId = useLocationStore((state) => state.id);
 
   const table = useReactTable({
     data,
@@ -79,10 +82,13 @@ export function TabularRoadData<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
+                className={`${
+                  selectedId == String(row.original.id) ? "bg-gray-800" : ""
+                }`}
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="text-gray-200">
+                  <TableCell key={cell.id} className={`text-gray-200 `}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

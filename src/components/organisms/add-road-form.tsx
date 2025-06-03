@@ -264,13 +264,19 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
         <div className="flex flex-row justify-between">
           <div className="space-y-1.5">
             <Label htmlFor="width" className="opacity-60">
-              Width
+              Width (m)
             </Label>
             <Input
               type="number"
               placeholder="Set road width"
               {...register("width", { valueAsNumber: true })}
             />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="length" className="opacity-60">
+              Length (m)
+            </Label>
+            <Input disabled placeholder="Length" value={length} />
           </div>
         </div>
 

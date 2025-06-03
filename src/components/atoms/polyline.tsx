@@ -1,25 +1,48 @@
-import { useMapEvents } from "react-leaflet";
+import { useMap } from "react-leaflet";
+import { useEffect } from "react";
 import type { LatLngLiteral } from "leaflet";
 
-type ClickableMapProps = {
-  onClick: (latlng: LatLngLiteral) => void;
-  onRightClick?: () => void;
-};
-
-const ClickableMap: React.FC<ClickableMapProps> = ({
-  onClick,
-  onRightClick,
+export const GeomanPolyline = ({
+  onDraw,
+}: {
+  onDraw: (latlngs: LatLngLiteral[]) => void;
 }) => {
-  useMapEvents({
-    click(e) {
-      onClick(e.latlng);
-    },
-    contextmenu() {
-      if (onRightClick) onRightClick();
-    },
-  });
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+
+    map.pm.addControls({
+      position: "topleft",
+      drawCircle: false,
+      drawMarker: false,
+      drawRectangle: false,
+      drawPolygon: false,
+      drawCircleMarker: false,
+    });
+
+    const handleCreate = (e: any) => {
+      if (e.shape === "Line" && e.layer) {
+        let latlngs = e.layer.getLatLngs();
+
+        if (Array.isArray(latlngs[0])) {
+          latlngs = latlngs.flat();
+        }
+
+        onDraw(latlngs);
+        e.layer.remove(); // optional
+      } else {
+        console.warn("No valid layer in pm:create", e);
+      }
+    };
+
+    map.on("pm:create", handleCreate);
+
+    return () => {
+      map.pm.removeControls();
+      map.off("pm:create", handleCreate);
+    };
+  }, [map, onDraw]);
 
   return null;
 };
-
-export default ClickableMap;
