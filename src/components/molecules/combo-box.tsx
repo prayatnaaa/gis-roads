@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
@@ -24,15 +22,26 @@ type ComboboxProps = {
   name?: string;
   properties: PlaceValueProps[];
   onChange?: (selected: PlaceValueProps) => void;
+  selectedId?: number;
 };
 
 export function Combobox({
   name = "Select...",
   properties,
   onChange,
+  selectedId,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
+
+  React.useEffect(() => {
+    if (selectedId) {
+      const selected = properties.find((item) => item.id === selectedId);
+      if (selected) {
+        setValue(selected.value);
+      }
+    }
+  }, [selectedId, properties]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -45,9 +54,7 @@ export function Combobox({
             value ? "text-white" : "opacity-60"
           }`}
         >
-          {value
-            ? properties.find((framework) => framework.value === value)?.value
-            : name}
+          {value ? value : name}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -61,10 +68,6 @@ export function Combobox({
                 <CommandItem
                   key={framework.id}
                   value={framework.value}
-                  // onSelect={(currentValue) => {
-                  //   setValue(currentValue === value ? "" : currentValue);
-                  //   setOpen(false);
-                  // }}
                   onSelect={() => {
                     const newValue =
                       framework.value === value ? "" : framework.value;

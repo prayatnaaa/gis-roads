@@ -7,6 +7,7 @@ import Login from "./components/pages/login-page";
 import React from "react";
 import { useRegionStore } from "./stores/region-stores";
 import { useRoadStore } from "./stores/road-data-stores";
+import EditRoad from "./components/pages/edit-road-page";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -42,6 +43,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/add-road" element={<AddRoad />} />
+          <Route path="/edit-road/:id" element={<EditRoad />} />
           <Route path="auth/register" element={<Register />} />
           <Route path="auth/login" element={<Login />} />
         </Routes>

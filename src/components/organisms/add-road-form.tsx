@@ -18,21 +18,31 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 import { useRegionStore } from "@/stores/region-stores";
+import { updateRoad } from "@/actions/edit-road";
 
 type AddRoadFormProps = {
   paths: { lat: number; lng: number }[];
   length: number;
+  initialData?: Partial<AddRoadFormData> & { id?: number };
+  isEdit?: boolean;
 };
 
-const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
+const AddRoadForm = ({
+  paths,
+  length,
+  initialData,
+  isEdit = false,
+}: AddRoadFormProps) => {
   const {
     register,
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<AddRoadFormData>({
     resolver: zodResolver(addRoadSchema),
+    defaultValues: initialData,
   });
 
   const navigate = useNavigate();
@@ -85,6 +95,27 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
     })();
   }, [token]);
 
+  // reset form and sync regency/district from initialData on edit
+  React.useEffect(() => {
+    if (initialData) {
+      reset(initialData);
+      if (initialData.village_id) {
+        const selectedVillage = desa.find(
+          (d) => d.id === initialData.village_id
+        );
+        const selectedDistrict = kecamatan.find(
+          (k) => k.id === selectedVillage?.kec_id
+        );
+        const selectedRegency = kabupaten.find(
+          (k) => k.id === selectedDistrict?.kab_id
+        );
+
+        setDistrictId(selectedDistrict?.id || null);
+        setRegencyId(selectedRegency?.id || null);
+      }
+    }
+  }, [initialData, desa, kecamatan, kabupaten, reset]);
+
   const filteredDistricts = React.useMemo(
     () => kecamatan.filter((k) => k.kab_id === regencyId),
     [kecamatan, regencyId]
@@ -102,10 +133,14 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
   };
 
   const onSubmit = async (data: AddRoadFormData) => {
-    const response = await addRoad(data, token);
-    if (response.code == 200) {
-      toast("Road has been created");
-      await navigate("/");
+    if (!token) return;
+    const response = isEdit
+      ? await updateRoad(initialData?.id!, data, token)
+      : await addRoad(data, token);
+
+    if (response.code === 200) {
+      toast(`Road has been ${isEdit ? "updated" : "created"}`);
+      navigate("/");
     }
   };
 
@@ -120,7 +155,9 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
         >
           <ChevronLeft />
         </Button>
-        <h1 className="text-lg font-bold">Add Road</h1>
+        <h1 className="text-lg font-bold">
+          {isEdit ? "Edit Road" : "Add Road"}
+        </h1>
       </div>
 
       <form
@@ -135,6 +172,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                 id: k.id,
                 value: k.kabupaten,
               }))}
+              selectedId={regencyId || undefined}
               onChange={(selected) => {
                 setRegencyId(selected.id);
                 setDistrictId(null);
@@ -149,6 +187,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                   id: d.id,
                   value: d.kecamatan,
                 }))}
+                selectedId={districtId || undefined}
                 onChange={(selected) => {
                   setDistrictId(selected.id);
                   setValue("village_id", undefined as any);
@@ -163,6 +202,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                   id: v.id,
                   value: v.desa,
                 }))}
+                selectedId={initialData?.village_id}
                 onChange={(selected) => setValue("village_id", selected.id)}
               />
             )}
@@ -183,6 +223,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                   <Combobox
                     name="Select existing material..."
                     properties={existingValue}
+                    selectedId={field.value}
                     onChange={(selected) => field.onChange(selected.id)}
                   />
                 )}
@@ -203,6 +244,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                   <Combobox
                     name="Select road type..."
                     properties={roadValues}
+                    selectedId={field.value}
                     onChange={(selected) => field.onChange(selected.id)}
                   />
                 )}
@@ -221,6 +263,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
                   <Combobox
                     name="Select road condition..."
                     properties={roadConditions}
+                    selectedId={field.value}
                     onChange={(selected) => field.onChange(selected.id)}
                   />
                 )}
@@ -286,7 +329,7 @@ const AddRoadForm = ({ paths, length }: AddRoadFormProps) => {
           disabled={isSubmitting}
           onClick={triggerSubmit}
         >
-          Submit
+          {isEdit ? "Update" : "Submit"}
         </Button>
       </form>
     </div>

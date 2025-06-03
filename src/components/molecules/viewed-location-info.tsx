@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { useLocationStore } from "@/stores/map-location-stores";
 import { X } from "lucide-react";
+import EditRoadButton from "../atoms/edit-road-button";
 
 export function ViewedLocationInfo({ id }: { id: string }) {
   const roads = useRoadStore((state) => state.roads);
@@ -40,10 +41,7 @@ export function ViewedLocationInfo({ id }: { id: string }) {
           <div>{road.kode_ruas}</div>
           <div>{road.lebar}</div>
           <div>{road.panjang}</div>
-          {/* {road.paths.toString()} */}
-        </div>
-        <div className="w-full flex items-center justify-center">
-          {road.nama_ruas}
+          <EditRoadButton id={road.id.toString()} />
         </div>
       </CardContent>
     </Card>
