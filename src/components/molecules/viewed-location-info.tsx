@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useLocationStore } from "@/stores/map-location-stores";
+import { X } from "lucide-react";
 
 // TODO: update UI
 export function ViewedLocationInfo({ id }: { id: string }) {
@@ -33,10 +34,10 @@ export function ViewedLocationInfo({ id }: { id: string }) {
     <Card className="w-[350px] absolute top-2 right-2 z-50">
       <CardHeader>
         <div
-          className="absolute top-2.5 right-2.5 hover:cursor-pointer"
+          className="absolute top-2.5 right-2.5 hover:cursor-pointer opacity-25 hover:opacity-80"
           onClick={resetLocation}
         >
-          X
+          <X />
         </div>
         <CardTitle>{road?.nama_ruas}</CardTitle>
         <CardDescription>{road?.keterangan}</CardDescription>

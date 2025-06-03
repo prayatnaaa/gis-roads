@@ -30,10 +30,10 @@ const HomeMaps = ({ location }: HomeMapsProps) => {
   return (
     <MapContainer
       center={location}
-      zoom={10}
-      className="h-screen w-full"
-      style={{ zIndex: 0 }}
+      zoom={13}
       zoomControl={false}
+      style={{ height: "100%", width: "100%" }}
+      className="z-0"
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <ChangeView center={location} />

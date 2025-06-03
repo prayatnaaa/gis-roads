@@ -1,8 +1,4 @@
 import "leaflet/dist/leaflet.css";
-// import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
-import { LogoutDialog } from "../molecules/logout-dialog";
-import { Button } from "../ui/button";
-import { useNavigate } from "react-router-dom";
 import { TabularRoadData } from "../organisms/tabular-road-data";
 import { roadTableColumns, type RoadTable } from "@/lib/road-table-columns";
 import { useRegionStore } from "@/stores/region-stores";
@@ -13,7 +9,6 @@ import { ViewedLocationInfo } from "../molecules/viewed-location-info";
 
 function Home() {
   const roads = useRoadStore((state) => state.roads);
-  const navigate = useNavigate();
   const desa = useRegionStore((state) => state.desa);
   const location = useLocationStore((state) => state.location);
   const roadID = useLocationStore((state) => state.id);
@@ -40,35 +35,16 @@ function Home() {
     }) ?? [];
 
   return (
-    <>
-      <div className="relative z-0 h-screen w-full">
-        <div className="absolute top-2.5 right-2.5 z-10">
-          <div className="w-full gap-2 flex flex-row">
-            {/* TODO: FIX the User menu dialog */}
-            {/* <UserAvatarDialog /> */}
-            <LogoutDialog />
-          </div>
-        </div>
-
+    <div className="flex flex-row-reverse gap-8 w-full h-screen p-8 overflow-hidden">
+      <div className="flex-1 relative border rounded-md overflow-hidden">
         {isSelected && <ViewedLocationInfo id={roadID} />}
-
-        <div className="absolute bottom-2.5 right-2.5 z-10">
-          <Button
-            variant="secondary"
-            className="hover:cursor-pointer"
-            onClick={() => navigate("add-road")}
-          >
-            Add Road
-          </Button>
-        </div>
-        <div className="w-full flex flex-row justify-between">
-          <div className="w-full items-center">
-            <TabularRoadData data={tableData} columns={roadTableColumns} />
-          </div>
-          <HomeMaps location={location} />
-        </div>
+        <HomeMaps location={location} />
       </div>
-    </>
+
+      <div className="w-1/2 z-10 overflow-y-auto">
+        <TabularRoadData columns={roadTableColumns} data={tableData} />
+      </div>
+    </div>
   );
 }
 

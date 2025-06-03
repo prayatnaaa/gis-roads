@@ -10,8 +10,6 @@ export type RoadTable = {
   condition: string;
 };
 
-const token = localStorage.getItem("token");
-
 export const roadTableColumns: ColumnDef<RoadTable>[] = [
   {
     accessorKey: "id",
@@ -33,6 +31,7 @@ export const roadTableColumns: ColumnDef<RoadTable>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const token = localStorage.getItem("token");
       return (
         <div className="w-full mx-auto flex flex-row gap-4 justify-end">
           <DeleteRoadButton token={token as string} id={row.original.id} />

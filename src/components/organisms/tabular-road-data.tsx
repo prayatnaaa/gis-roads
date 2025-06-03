@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "../ui/input";
 import React from "react";
+import AddRoadButton from "../atoms/add-road-button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -43,15 +44,19 @@ export function TabularRoadData<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md p-2">
-      <Input
-        placeholder="Filter locations..."
-        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn("name")?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm mb-4"
-      />
+    <div className="container border rounded-md p-2 mb-8">
+      <div className="w-full sm:flex flex-row justify-between sm:mb-4">
+        <Input
+          placeholder="Filter locations..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+
+        <AddRoadButton />
+      </div>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
