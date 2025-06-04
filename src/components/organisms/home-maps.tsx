@@ -3,6 +3,7 @@ import { useRoadStore } from "@/stores/road-data-stores";
 import { useEffect } from "react";
 import { getRoadStyle } from "@/actions/get-road-styles";
 import { useLocationStore } from "@/stores/map-location-stores";
+import React from "react";
 
 type HomeMapsProps = {
   location: [number, number];
@@ -10,9 +11,10 @@ type HomeMapsProps = {
 
 const ChangeView = ({ center }: { center: [number, number] }) => {
   const map = useMap();
+  const zoomControl = useLocationStore((state) => state.zoomLevel);
 
   useEffect(() => {
-    map.flyTo(center, map.getZoom(), { animate: true });
+    map.flyTo(center, zoomControl, { animate: true });
   }, [center, map]);
 
   return null;
@@ -21,13 +23,12 @@ const ChangeView = ({ center }: { center: [number, number] }) => {
 const HomeMaps = ({ location }: HomeMapsProps) => {
   const roads = useRoadStore((state) => state.roads);
   const setLocId = useLocationStore((state) => state.setLocation);
-  const selectedLocId = useLocationStore.getState().id;
-  const zoomControl = useLocationStore.getState().zoomLevel;
+  const selectedLocId = useLocationStore((state) => state.id);
 
   return (
     <MapContainer
       center={location}
-      zoom={zoomControl}
+      zoom={11}
       zoomControl={false}
       style={{ height: "100%", width: "100%" }}
       className="z-0"
@@ -38,26 +39,58 @@ const HomeMaps = ({ location }: HomeMapsProps) => {
       {roads.length > 0 &&
         roads.map((data) =>
           Array.isArray(data.paths) ? (
-            <Polyline
-              key={data.id}
-              positions={data.paths.map((point) => [point.lat, point.lng])}
-              pathOptions={getRoadStyle(data.jenisjalan_id, data.kondisi_id)}
-              eventHandlers={{
-                click: () => {
-                  if (Array.isArray(data.paths) && data.paths.length > 0) {
-                    const firstPoint = data.paths[0];
-                    setLocId(
-                      firstPoint.lat,
-                      firstPoint.lng,
-                      data.id.toString()
-                    );
-                  }
-                },
-              }}
-              className={
-                selectedLocId === String(data.id) ? "glowing-polyline" : ""
-              }
-            ></Polyline>
+            <React.Fragment key={data.id}>
+              {String(data.id) === selectedLocId && (
+                <>
+                  <Polyline
+                    positions={data.paths.map((p) => [p.lat, p.lng])}
+                    pathOptions={{
+                      color: "cyan",
+                      weight: 20,
+                      opacity: 0.3,
+                    }}
+                    interactive={false}
+                  />
+                  <Polyline
+                    positions={data.paths.map((p) => [p.lat, p.lng])}
+                    pathOptions={{
+                      color: "cyan",
+                      weight: 14,
+                      opacity: 0.5,
+                    }}
+                    interactive={false}
+                  />
+                </>
+              )}
+              <Polyline
+                positions={data.paths.map((p) => [p.lat, p.lng])}
+                pathOptions={getRoadStyle(data.jenisjalan_id, data.kondisi_id)}
+                eventHandlers={{
+                  click: () => {
+                    if (Array.isArray(data.paths) && data.paths.length > 0) {
+                      try {
+                        const { lat, lng } = data.paths.reduce(
+                          (acc, point) => {
+                            return {
+                              lat: acc.lat + point.lat / data.paths.length,
+                              lng: acc.lng + point.lng / data.paths.length,
+                            };
+                          },
+                          { lat: 0, lng: 0 }
+                        );
+
+                        setLocId(lat, lng, data.id.toString());
+                      } catch (err) {
+                        console.error(
+                          "Failed to set location from path data:",
+                          err
+                        );
+                      }
+                    }
+                  },
+                }}
+              />
+            </React.Fragment>
           ) : null
         )}
     </MapContainer>

@@ -1,4 +1,5 @@
 import { useRoadStore } from "@/stores/road-data-stores";
+import { useLocationStore } from "@/stores/map-location-stores";
 import {
   Card,
   CardContent,
@@ -6,9 +7,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useLocationStore } from "@/stores/map-location-stores";
 import { X } from "lucide-react";
 import EditRoadButton from "../atoms/edit-road-button";
+import { RoadDescDialog } from "./road-desc-dialog";
+
+const kondisiLabels: Record<number, string> = {
+  1: "Baik",
+  2: "Sedang",
+  3: "Rusak",
+};
+
+const eksistingLabels: Record<number, string> = {
+  1: "Aspal",
+  2: "Kerikil",
+  3: "Tanah",
+  4: "Beton",
+  12: "Beton Bertulang",
+};
+
+const jenisJalanLabels: Record<number, string> = {
+  1: "Jalan Kabupaten",
+  2: "Jalan Desa",
+  3: "Jalan Lingkungan",
+};
 
 export function ViewedLocationInfo({ id }: { id: string }) {
   const roads = useRoadStore((state) => state.roads);
@@ -28,17 +49,35 @@ export function ViewedLocationInfo({ id }: { id: string }) {
           <X />
         </div>
         <CardTitle>{road.nama_ruas}</CardTitle>
-        <CardDescription>{road.desa_id}</CardDescription>
+        <CardDescription>Desa ID: {road.desa_id}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-2">
-          <div>{road.kondisi_id}</div>
-          <div>{road.keterangan}</div>
-          <div>{road.eksisting_id}</div>
-          <div>{road.jenisjalan_id}</div>
-          <div>{road.kode_ruas}</div>
-          <div>{road.lebar}</div>
-          <div>{road.panjang}</div>
+        <div className="flex flex-col gap-2 text-sm">
+          <div className="flex justify-between">
+            <strong>Kondisi</strong>
+            {kondisiLabels[road.kondisi_id] || `ID ${road.kondisi_id}`}
+          </div>
+          <div className="flex justify-between">
+            <strong>Keterangan</strong>{" "}
+            <RoadDescDialog desc={road.keterangan} />
+          </div>
+          <div className="flex justify-between">
+            <strong>Eksisting</strong>
+            {eksistingLabels[road.eksisting_id] || `ID ${road.eksisting_id}`}
+          </div>
+          <div className="flex justify-between">
+            <strong>Jenis Jalan</strong>
+            {jenisJalanLabels[road.jenisjalan_id] || `ID ${road.jenisjalan_id}`}
+          </div>
+          <div className="flex justify-between">
+            <strong>Kode Ruas</strong> {road.kode_ruas}
+          </div>
+          <div className="flex justify-between">
+            <strong>Lebar (m):</strong> {road.lebar}
+          </div>
+          <div className="flex justify-between">
+            <strong>Panjang (m)</strong> {road.panjang}
+          </div>
           <EditRoadButton id={road.id.toString()} />
         </div>
       </CardContent>

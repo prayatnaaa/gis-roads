@@ -15,13 +15,13 @@ export const useLocationStore = create<LocationStore>((set) => ({
   id: "null",
   location: DEFAULT_LOCATION,
   isSelected: false,
-  zoomLevel: 13,
+  zoomLevel: 10,
   setLocation: (lat, lng, id) =>
     set(() => ({
       location: [lat, lng],
       isSelected: true,
       id: id,
-      zoomLevel: 7,
+      zoomLevel: 14,
     })),
   resetLocation: () => set(() => ({ isSelected: false, id: "null" })),
 }));
