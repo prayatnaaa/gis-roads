@@ -10,7 +10,7 @@ import { ViewedLocationInfo } from "../molecules/viewed-location-info";
 import { LogoutDialog } from "../molecules/logout-dialog";
 // import { Combobox } from "../molecules/combo-box";
 // import { getRoadType } from "@/actions/get-road-status";
-import type { PlaceValueProps } from "@/lib/region-type";
+// import type { PlaceValueProps } from "@/lib/region-type";
 
 function Home() {
   const roads = useRoadStore((state) => state.roads);

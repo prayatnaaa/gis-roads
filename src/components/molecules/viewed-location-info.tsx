@@ -19,17 +19,21 @@ const kondisiLabels: Record<number, string> = {
 };
 
 const eksistingLabels: Record<number, string> = {
-  1: "Aspal",
-  2: "Kerikil",
-  3: "Tanah",
-  4: "Beton",
-  12: "Beton Bertulang",
+  1: "Tanah",
+  2: "Tanah/Beton",
+  3: "Perkerasan",
+  4: "Koral",
+  5: "Lapen",
+  6: "Paving",
+  7: "Hotmix",
+  8: "Beton",
+  9: "Beton/Lapen",
 };
 
 const jenisJalanLabels: Record<number, string> = {
-  1: "Jalan Kabupaten",
-  2: "Jalan Desa",
-  3: "Jalan Lingkungan",
+  1: "Jalan desa",
+  2: "Jalan kabupaten",
+  3: "Jalan provinsi",
 };
 
 export function ViewedLocationInfo({ id }: { id: string }) {

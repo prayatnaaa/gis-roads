@@ -37,19 +37,23 @@ export function TabularRoadData({
   // );
   const selectedId = useLocationStore((state) => state.id);
   const pageSize = 5;
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize,
+  });
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    // getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    // onColumnFiltersChange: setColumnFilters,
-    // state: {
-    //   columnFilters,
-    // },
+    state: {
+      pagination,
+    },
+    onPaginationChange: setPagination,
     initialState: {
       pagination: {
+        pageIndex: 0,
         pageSize,
       },
     },
@@ -57,26 +61,16 @@ export function TabularRoadData({
 
   React.useEffect(() => {
     const id = Number(selectedId);
-
     if (!id || data.length === 0) return;
 
     const rowIndex = data.findIndex((item) => item.id === id);
-    console.log("row index ", rowIndex);
-
     if (rowIndex !== -1) {
-      console.log("pppp");
-      const pageIndex = Math.floor(rowIndex / pageSize);
-      console.log(table.getState().pagination.pageIndex);
-      if (table.getState().pagination.pageIndex !== pageIndex) {
-        console.log("p", table.getState().pagination.pageIndex);
-        console.log(pageIndex);
-        setTimeout(() => {
-          table.setPageIndex(pageIndex);
-        }, 0);
+      const newPageIndex = Math.floor(rowIndex / pageSize);
+      if (newPageIndex !== pagination.pageIndex) {
+        setPagination((old) => ({ ...old, pageIndex: newPageIndex }));
       }
     }
-  }, [selectedId, data, pageSize, table]);
-
+  }, [selectedId, data, pageSize, pagination.pageIndex]);
   return (
     <div>
       <div className="container border rounded-md p-2">
