@@ -3,9 +3,9 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getFilteredRowModel,
+  // getFilteredRowModel,
   getPaginationRowModel,
-  type ColumnFiltersState,
+  // type ColumnFiltersState,
 } from "@tanstack/react-table";
 
 import {
@@ -21,6 +21,7 @@ import React from "react";
 import AddRoadButton from "../atoms/add-road-button";
 import { useLocationStore } from "@/stores/map-location-stores";
 import type { RoadTable } from "@/lib/road-table-columns";
+import { Button } from "../ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,30 +32,50 @@ export function TabularRoadData({
   columns,
   data,
 }: DataTableProps<RoadTable, unknown>) {
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+  // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  //   []
+  // );
   const selectedId = useLocationStore((state) => state.id);
-
-  const [visiblePageCount, setVisiblePageCount] = React.useState(1);
-  const pageSize = 3;
+  const pageSize = 5;
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    // getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    state: {
-      columnFilters,
+    // onColumnFiltersChange: setColumnFilters,
+    // state: {
+    //   columnFilters,
+    // },
+    initialState: {
+      pagination: {
+        pageSize,
+      },
     },
-    manualPagination: false,
   });
 
-  const allRows = table.getFilteredRowModel().rows;
-  const rowsToRender = allRows.slice(0, visiblePageCount * pageSize);
-  const hasMore = allRows.length > rowsToRender.length;
+  React.useEffect(() => {
+    const id = Number(selectedId);
+
+    if (!id || data.length === 0) return;
+
+    const rowIndex = data.findIndex((item) => item.id === id);
+    console.log("row index ", rowIndex);
+
+    if (rowIndex !== -1) {
+      console.log("pppp");
+      const pageIndex = Math.floor(rowIndex / pageSize);
+      console.log(table.getState().pagination.pageIndex);
+      if (table.getState().pagination.pageIndex !== pageIndex) {
+        console.log("p", table.getState().pagination.pageIndex);
+        console.log(pageIndex);
+        setTimeout(() => {
+          table.setPageIndex(pageIndex);
+        }, 0);
+      }
+    }
+  }, [selectedId, data, pageSize, table]);
 
   return (
     <div>
@@ -89,17 +110,19 @@ export function TabularRoadData({
             ))}
           </TableHeader>
           <TableBody>
-            {rowsToRender.length ? (
-              rowsToRender.map((row) => (
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className={`${
-                    selectedId == String(row.original.id) ? "bg-gray-800" : ""
-                  }`}
+                  className={
+                    String(row.original.id) === String(selectedId)
+                      ? "bg-gray-800 text-white"
+                      : ""
+                  }
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className={`text-gray-200 `}>
+                    <TableCell key={cell.id} className="text-gray-200">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -122,11 +145,25 @@ export function TabularRoadData({
         </Table>
       </div>
 
-      {hasMore && (
-        <div className="flex justify-end text-sm mt-2 opacity-40 hover:opacity-90 hover:cursor-pointer">
-          <div onClick={() => setVisiblePageCount((p) => p + 1)}>Load more</div>
-        </div>
-      )}
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }
