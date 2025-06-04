@@ -1,3 +1,4 @@
+import React from "react";
 import "leaflet/dist/leaflet.css";
 import { TabularRoadData } from "../organisms/tabular-road-data";
 import { roadTableColumns, type RoadTable } from "@/lib/road-table-columns";
@@ -6,6 +7,10 @@ import { useRoadStore } from "@/stores/road-data-stores";
 import HomeMaps from "../organisms/home-maps";
 import { useLocationStore } from "@/stores/map-location-stores";
 import { ViewedLocationInfo } from "../molecules/viewed-location-info";
+import { LogoutDialog } from "../molecules/logout-dialog";
+// import { Combobox } from "../molecules/combo-box";
+// import { getRoadType } from "@/actions/get-road-status";
+import type { PlaceValueProps } from "@/lib/region-type";
 
 function Home() {
   const roads = useRoadStore((state) => state.roads);
@@ -14,8 +19,38 @@ function Home() {
   const roadID = useLocationStore((state) => state.id);
   const isSelected = useLocationStore((state) => state.isSelected);
 
+  const [selectedTypeId, setSelectedTypeId] = React.useState<number | null>(
+    null
+  );
+  // const [roadTypes, setRoadTypes] = React.useState<PlaceValueProps[]>([]);
+  // const [typeNameMap, setTypeNameMap] = React.useState<Map<number, string>>(
+  //   new Map()
+  // );
+
+  // const token = localStorage.getItem("token");
+
+  // React.useEffect(() => {
+  //   if (!token) return;
+  //   (async () => {
+  //     const response = await getRoadType(token);
+  //     const types =
+  //       response.data?.types.map((t) => ({ id: t.id, value: t.value })) || [];
+
+  //     setRoadTypes(types);
+
+  //     const map = new Map<number, string>();
+  //     types.forEach((t) => map.set(t.id, t.value));
+  //     setTypeNameMap(map);
+  //   })();
+  // }, [token]);
+
+  const filteredRoads = React.useMemo(() => {
+    if (!selectedTypeId) return roads;
+    return roads?.filter((road) => road.jenisjalan_id === selectedTypeId);
+  }, [roads, selectedTypeId]);
+
   const tableData: RoadTable[] =
-    roads?.map((road) => {
+    filteredRoads?.map((road) => {
       const desaName =
         desa.find((d) => d.id === road.desa_id)?.desa || "Unknown Desa";
       const status =
@@ -41,8 +76,29 @@ function Home() {
         <HomeMaps location={location} />
       </div>
 
-      <div className="w-1/2 z-10 overflow-y-auto">
+      <div className="w-1/2 z-10 overflow-y-auto relative">
+        {/* {roadTypes.length > 0 && (
+          <div className="mb-4 px-2 pt-2">
+            <Combobox
+              name="Filter by road type..."
+              properties={roadTypes}
+              selectedId={selectedTypeId ?? undefined}
+              onChange={(selected) => setSelectedTypeId(selected.id)}
+            />
+            <button
+              className="text-sm text-blue-500 mt-2 underline"
+              onClick={() => setSelectedTypeId(null)}
+            >
+              Reset filter
+            </button>
+          </div>
+        )} */}
+
         <TabularRoadData columns={roadTableColumns} data={tableData} />
+
+        <div className="absolute bottom-2.5 left-2.5">
+          <LogoutDialog />
+        </div>
       </div>
     </div>
   );

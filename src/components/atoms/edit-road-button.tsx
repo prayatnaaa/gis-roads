@@ -5,6 +5,7 @@ const EditRoadButton = ({ id }: { id: string }) => {
   const navigate = useNavigate();
   return (
     <Button
+      className="hover:cursor-pointer"
       variant="secondary"
       onClick={() => {
         navigate(`edit-road/${id}`);

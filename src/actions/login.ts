@@ -28,7 +28,11 @@ export const goLogin = async ({
     console.log(response);
 
     if (!response.ok) {
-      return { success: false, message: "Something went wrong" };
+      return {
+        success: false,
+        message: "Something went wrong",
+        status: response.status,
+      };
     }
 
     const data = await response.json();

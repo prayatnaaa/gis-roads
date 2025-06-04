@@ -11,7 +11,7 @@ import { CustomAlert } from "../atoms/custom-alert";
 
 type Coordinate = { lat: number; lng: number };
 
-function mapRoadToFormData(road: Road): AddRoadFormData {
+function mapRoadToFormData(road: Road): AddRoadFormData & { id: number } {
   let paths: Coordinate[] = [];
   if (typeof road.paths === "string") {
     try {
@@ -24,6 +24,7 @@ function mapRoadToFormData(road: Road): AddRoadFormData {
   }
 
   return {
+    id: road.id,
     village_id: road.desa_id,
     road_name: road.nama_ruas,
     length: road.panjang,
@@ -39,9 +40,9 @@ function mapRoadToFormData(road: Road): AddRoadFormData {
 
 const EditRoad = () => {
   const { id } = useParams<{ id: string }>();
-  const [initialData, setInitialData] = React.useState<AddRoadFormData | null>(
-    null
-  );
+  const [initialData, setInitialData] = React.useState<
+    (AddRoadFormData & { id: number }) | null
+  >(null);
   const [positions, setPositions] = React.useState<Coordinate[]>([]);
 
   React.useEffect(() => {
@@ -102,9 +103,7 @@ const EditRoad = () => {
 
           <GeomanPolyline onDraw={(latlngs) => setPositions(latlngs)} />
 
-          {positions.length > 0 && (
-            <Polyline positions={positions} color="black" />
-          )}
+          {positions.length > 0 && <Polyline positions={positions} />}
         </MapContainer>
       </div>
     </div>

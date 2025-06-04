@@ -10,6 +10,7 @@ import {
 import { X } from "lucide-react";
 import EditRoadButton from "../atoms/edit-road-button";
 import { RoadDescDialog } from "./road-desc-dialog";
+import { useRegionStore } from "@/stores/region-stores";
 
 const kondisiLabels: Record<number, string> = {
   1: "Baik",
@@ -33,6 +34,11 @@ const jenisJalanLabels: Record<number, string> = {
 
 export function ViewedLocationInfo({ id }: { id: string }) {
   const roads = useRoadStore((state) => state.roads);
+  const villages = useRegionStore((state) => state.desa);
+  const village = (id: number): string => {
+    const data = villages.find((v) => v.id === id);
+    return data?.desa as string;
+  };
   const resetLocation = useLocationStore((state) => state.resetLocation);
 
   const road = roads.find((r) => String(r.id) === String(id));
@@ -40,7 +46,7 @@ export function ViewedLocationInfo({ id }: { id: string }) {
   if (!road) return null;
 
   return (
-    <Card className="w-[350px] absolute top-2 right-2 z-50">
+    <Card className="sm:absolute left-1/2 bottom-1 transform -translate-x-1/2 z-50 sm:w-[600px]">
       <CardHeader>
         <div
           className="absolute top-2.5 right-2.5 hover:cursor-pointer opacity-25 hover:opacity-80"
@@ -49,35 +55,37 @@ export function ViewedLocationInfo({ id }: { id: string }) {
           <X />
         </div>
         <CardTitle>{road.nama_ruas}</CardTitle>
-        <CardDescription>Desa ID: {road.desa_id}</CardDescription>
+        <CardDescription>{village(road.desa_id)}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col gap-2 text-sm">
-          <div className="flex justify-between">
-            <strong>Kondisi</strong>
+      <CardContent className="flex flex-col gap-1">
+        <div className="grid grid-flow-col grid-rows-2 gap-4 text-sm">
+          <div className="flex flex-col">
+            <strong>Condition</strong>
             {kondisiLabels[road.kondisi_id] || `ID ${road.kondisi_id}`}
           </div>
-          <div className="flex justify-between">
+          {/* <div className="flex flex-col">
             <strong>Keterangan</strong>{" "}
             <RoadDescDialog desc={road.keterangan} />
-          </div>
-          <div className="flex justify-between">
-            <strong>Eksisting</strong>
+          </div> */}
+          <div className="flex flex-col">
+            <strong>Existing</strong>
             {eksistingLabels[road.eksisting_id] || `ID ${road.eksisting_id}`}
           </div>
-          <div className="flex justify-between">
-            <strong>Jenis Jalan</strong>
+          <div className="flex flex-col">
+            <strong>Road type</strong>
             {jenisJalanLabels[road.jenisjalan_id] || `ID ${road.jenisjalan_id}`}
           </div>
-          <div className="flex justify-between">
-            <strong>Kode Ruas</strong> {road.kode_ruas}
+
+          <div className="flex flex-col">
+            <strong>Width (m):</strong> {road.lebar}
           </div>
-          <div className="flex justify-between">
-            <strong>Lebar (m):</strong> {road.lebar}
+          <div className="flex flex-col">
+            <strong>Length (m)</strong>{" "}
+            {Math.round(road.panjang).toLocaleString()}
           </div>
-          <div className="flex justify-between">
-            <strong>Panjang (m)</strong> {road.panjang}
-          </div>
+        </div>
+        <div className="flex flex-row gap-2 items-center self-end">
+          <RoadDescDialog desc={road.keterangan} />
           <EditRoadButton id={road.id.toString()} />
         </div>
       </CardContent>

@@ -13,7 +13,9 @@ export function RoadDescDialog({ desc }: { desc: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <p className="hover:cursor-pointer hover:font-semibold">Open</p>
+        <p className="hover:cursor-pointer hover:font-semibold text-sm">
+          Description
+        </p>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

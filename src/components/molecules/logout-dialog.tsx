@@ -9,9 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "../ui/button";
 import React from "react";
-import { boolean } from "zod";
 import { useNavigate } from "react-router-dom";
 
 export function LogoutDialog() {
@@ -27,7 +25,7 @@ export function LogoutDialog() {
       <AlertDialogContent className={`${isOpen ? "block" : "hidden"}`}>
         <AlertDialogHeader>
           <AlertDialogTitle>Log out?</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="mb-4">
             Are you absolutely sure want to log out? you'll need to sign in
             after this
           </AlertDialogDescription>

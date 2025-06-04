@@ -21,7 +21,7 @@ function App() {
     if (token && location.pathname == "/") {
       road(token);
     }
-  }, [location.pathname]);
+  }, [location.pathname, token]);
 
   React.useEffect(() => {
     const authRoutes = ["/auth/login", "/auth/register"];

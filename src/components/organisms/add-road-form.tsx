@@ -39,11 +39,25 @@ const AddRoadForm = ({
     handleSubmit,
     setValue,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<AddRoadFormData>({
     resolver: zodResolver(addRoadSchema),
-    defaultValues: initialData,
+    defaultValues: {
+      road_name: "",
+      road_code: 0,
+      paths: [],
+      length: 0,
+      width: 0,
+      village_id: undefined,
+      existing_id: undefined,
+      type_id: undefined,
+      condition_id: undefined,
+      ...initialData,
+    },
   });
+
+  const watchedLength = watch("length");
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -95,26 +109,33 @@ const AddRoadForm = ({
     })();
   }, [token]);
 
-  // reset form and sync regency/district from initialData on edit
   React.useEffect(() => {
-    if (initialData) {
-      reset(initialData);
-      if (initialData.village_id) {
-        const selectedVillage = desa.find(
-          (d) => d.id === initialData.village_id
-        );
-        const selectedDistrict = kecamatan.find(
-          (k) => k.id === selectedVillage?.kec_id
-        );
-        const selectedRegency = kabupaten.find(
-          (k) => k.id === selectedDistrict?.kab_id
-        );
+    if (!initialData) return;
 
-        setDistrictId(selectedDistrict?.id || null);
-        setRegencyId(selectedRegency?.id || null);
-      }
-    }
-  }, [initialData, desa, kecamatan, kabupaten, reset]);
+    reset({
+      ...initialData,
+      paths: initialData.paths || paths,
+      length: initialData.length ?? length,
+    });
+
+    const selectedVillage = desa.find((d) => d.id === initialData.village_id);
+    const selectedDistrict = kecamatan.find(
+      (k) => k.id === selectedVillage?.kec_id
+    );
+    const selectedRegency = kabupaten.find(
+      (k) => k.id === selectedDistrict?.kab_id
+    );
+
+    setDistrictId(selectedDistrict?.id || null);
+    setRegencyId(selectedRegency?.id || null);
+  }, [initialData, paths, length, desa, kecamatan, kabupaten, reset]);
+
+  React.useEffect(() => {
+    setValue("paths", paths);
+    setValue("length", length);
+    console.log(paths);
+    console.log(length);
+  }, [paths, length, setValue]);
 
   const filteredDistricts = React.useMemo(
     () => kecamatan.filter((k) => k.kab_id === regencyId),
@@ -127,13 +148,12 @@ const AddRoadForm = ({
   );
 
   const triggerSubmit = () => {
-    setValue("paths", paths);
-    setValue("length", length);
     handleSubmit(onSubmit)();
   };
 
   const onSubmit = async (data: AddRoadFormData) => {
     if (!token) return;
+
     const response = isEdit
       ? await updateRoad(initialData?.id!, data, token)
       : await addRoad(data, token);
@@ -215,61 +235,52 @@ const AddRoadForm = ({
           </div>
 
           <div className="flex flex-col gap-4">
-            {existingValue.length > 0 && (
-              <Controller
-                control={control}
-                name="existing_id"
-                render={({ field }) => (
-                  <Combobox
-                    name="Select existing material..."
-                    properties={existingValue}
-                    selectedId={field.value}
-                    onChange={(selected) => field.onChange(selected.id)}
-                  />
-                )}
-              />
-            )}
-
+            <Controller
+              control={control}
+              name="existing_id"
+              render={({ field }) => (
+                <Combobox
+                  name="Select existing material..."
+                  properties={existingValue}
+                  selectedId={field.value}
+                  onChange={(selected) => field.onChange(selected.id)}
+                />
+              )}
+            />
             {errors.existing_id && (
               <p className="text-red-500 text-sm">
                 {errors.existing_id.message}
               </p>
             )}
 
-            {roadValues.length > 0 && (
-              <Controller
-                control={control}
-                name="type_id"
-                render={({ field }) => (
-                  <Combobox
-                    name="Select road type..."
-                    properties={roadValues}
-                    selectedId={field.value}
-                    onChange={(selected) => field.onChange(selected.id)}
-                  />
-                )}
-              />
-            )}
-
+            <Controller
+              control={control}
+              name="type_id"
+              render={({ field }) => (
+                <Combobox
+                  name="Select road type..."
+                  properties={roadValues}
+                  selectedId={field.value}
+                  onChange={(selected) => field.onChange(selected.id)}
+                />
+              )}
+            />
             {errors.type_id && (
               <p className="text-red-500 text-sm">{errors.type_id.message}</p>
             )}
 
-            {roadConditions.length > 0 && (
-              <Controller
-                control={control}
-                name="condition_id"
-                render={({ field }) => (
-                  <Combobox
-                    name="Select road condition..."
-                    properties={roadConditions}
-                    selectedId={field.value}
-                    onChange={(selected) => field.onChange(selected.id)}
-                  />
-                )}
-              />
-            )}
-
+            <Controller
+              control={control}
+              name="condition_id"
+              render={({ field }) => (
+                <Combobox
+                  name="Select road condition..."
+                  properties={roadConditions}
+                  selectedId={field.value}
+                  onChange={(selected) => field.onChange(selected.id)}
+                />
+              )}
+            />
             {errors.condition_id && (
               <p className="text-red-500 text-sm">
                 {errors.condition_id.message}
@@ -319,7 +330,7 @@ const AddRoadForm = ({
             <Label htmlFor="length" className="opacity-60">
               Length (m)
             </Label>
-            <Input disabled placeholder="Length" value={length} />
+            <Input disabled placeholder="Length" value={watchedLength || ""} />
           </div>
         </div>
 

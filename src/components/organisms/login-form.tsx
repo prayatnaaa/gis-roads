@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { loginSchema, type TLoginSchema } from "@/lib/login-types";
 import { useNavigate } from "react-router-dom";
 import { goLogin } from "@/actions/login";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const {
@@ -32,7 +33,14 @@ export function LoginForm() {
         password: values.password,
       });
 
-      console.log(response);
+      console.log("pppp");
+
+      console.log(response.status);
+      if (response.status === 401) {
+        toast("Invalid email or password");
+        return;
+      }
+
       if (!response.success) {
         setError("root", {
           type: "manual",
@@ -40,6 +48,7 @@ export function LoginForm() {
         });
         return;
       }
+
       localStorage.setItem("token", response.token!);
       navigate("/");
     } catch (error) {

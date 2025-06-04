@@ -14,7 +14,8 @@ export const useRoadStore = create<RoadState>()((set) => ({
     try {
       const response = await getAllRoads(token);
 
-      if (!response || response.length === 0) {
+      if (!response) {
+        localStorage.removeItem("token");
         set({ isError: true, roads: [] });
         return;
       }

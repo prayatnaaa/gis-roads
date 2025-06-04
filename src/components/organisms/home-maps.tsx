@@ -1,9 +1,16 @@
-import { MapContainer, Polyline, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Polyline,
+  TileLayer,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
 import { useRoadStore } from "@/stores/road-data-stores";
 import { useEffect } from "react";
 import { getRoadStyle } from "@/actions/get-road-styles";
 import { useLocationStore } from "@/stores/map-location-stores";
 import React from "react";
+import { useRegionStore } from "@/stores/region-stores";
 
 type HomeMapsProps = {
   location: [number, number];
@@ -24,6 +31,14 @@ const HomeMaps = ({ location }: HomeMapsProps) => {
   const roads = useRoadStore((state) => state.roads);
   const setLocId = useLocationStore((state) => state.setLocation);
   const selectedLocId = useLocationStore((state) => state.id);
+  const villages = useRegionStore((state) => state.desa);
+  const village = (id: number): string => {
+    const data = villages.find((item) => item.id == id);
+    if (!data) {
+      return "Village unknown";
+    }
+    return data.desa;
+  };
 
   return (
     <MapContainer
@@ -89,7 +104,20 @@ const HomeMaps = ({ location }: HomeMapsProps) => {
                     }
                   },
                 }}
-              />
+              >
+                {" "}
+                <Tooltip
+                  direction="top"
+                  offset={[0, -10]}
+                  opacity={1}
+                  permanent={false}
+                >
+                  <div className="flex flex-col text-sm rounded-lg">
+                    <strong>{data.nama_ruas}</strong>
+                    <span>{village(data.desa_id)}</span>
+                  </div>
+                </Tooltip>
+              </Polyline>
             </React.Fragment>
           ) : null
         )}

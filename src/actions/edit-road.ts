@@ -5,34 +5,35 @@ export const updateRoad = async (
   formData: AddRoadFormData,
   token: string | null
 ): Promise<AddRoadResponse> => {
-  const fd = new FormData();
+  if (!token) {
+    return {
+      message: "Unauthorized",
+      status: "failed",
+      code: 401,
+    };
+  }
 
   try {
-    fd.append("desa_id", formData.village_id.toString());
-    if (formData.road_code) {
-      fd.append("kode_ruas", formData.road_code.toString());
-    }
-    fd.append("nama_ruas", formData.road_name);
-    fd.append("panjang", formData.length.toString());
-    fd.append("lebar", formData.width.toString());
-    fd.append("eksisting_id", formData.existing_id.toString());
-    fd.append("kondisi_id", formData.condition_id.toString());
-    fd.append("jenisjalan_id", formData.type_id.toString());
-
-    if (formData.description) {
-      fd.append("keterangan", formData.description);
-    }
-
-    fd.append("paths", JSON.stringify(formData.paths));
-
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL}/ruasjalan/${id}`,
       {
         method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: fd,
+        body: JSON.stringify({
+          desa_id: formData.village_id,
+          kode_ruas: formData.road_code,
+          nama_ruas: formData.road_name,
+          panjang: formData.length,
+          lebar: formData.width,
+          eksisting_id: formData.existing_id,
+          kondisi_id: formData.condition_id,
+          jenisjalan_id: formData.type_id,
+          keterangan: formData.description,
+          paths: formData.paths,
+        }),
       }
     );
 
