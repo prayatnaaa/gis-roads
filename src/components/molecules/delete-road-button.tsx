@@ -10,7 +10,6 @@ import {
 
 import { Button } from "../ui/button";
 import { deleteRoadById } from "@/actions/delete-road";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 type DeleteButtonProps = {
@@ -19,12 +18,13 @@ type DeleteButtonProps = {
 };
 
 const DeleteRoadButton = ({ token, id }: DeleteButtonProps) => {
-  const navigate = useNavigate();
   const deleteRoad = async () => {
     const response = await deleteRoadById(token, id);
     if (response.code == 200 || response.status == "success") {
       toast(response.message);
-      navigate("/");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1500);
       return;
     }
     toast(response.message);
@@ -33,9 +33,9 @@ const DeleteRoadButton = ({ token, id }: DeleteButtonProps) => {
     <div>
       <Dialog>
         <DialogTrigger>
-          <Button className="z-10 bg-red-700 text-white hover:cursor-pointer hover:bg-red-800">
+          <p className="text-sm text-red-600 hover:cursor-pointer hover:font-semibold">
             Delete
-          </Button>
+          </p>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

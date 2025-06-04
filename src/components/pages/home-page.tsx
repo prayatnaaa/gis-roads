@@ -1,86 +1,50 @@
-import { MapContainer, Polyline, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-// import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
-import React from "react";
-import { LogoutDialog } from "../molecules/logout-dialog";
-import { getAllRoads, type Road } from "@/actions/get-all-roads";
-import { Button } from "../ui/button";
-import { useNavigate } from "react-router-dom";
-import DeleteRoadButton from "../molecules/delete-road-button";
+import { TabularRoadData } from "../organisms/tabular-road-data";
+import { roadTableColumns, type RoadTable } from "@/lib/road-table-columns";
+import { useRegionStore } from "@/stores/region-stores";
+import { useRoadStore } from "@/stores/road-data-stores";
+import HomeMaps from "../organisms/home-maps";
+import { useLocationStore } from "@/stores/map-location-stores";
+import { ViewedLocationInfo } from "../molecules/viewed-location-info";
 
 function Home() {
-  const [roadData, setRoadData] = React.useState<Road[] | null>(null);
-  const token = localStorage.getItem("token");
-  const navigate = useNavigate();
+  const roads = useRoadStore((state) => state.roads);
+  const desa = useRegionStore((state) => state.desa);
+  const location = useLocationStore((state) => state.location);
+  const roadID = useLocationStore((state) => state.id);
+  const isSelected = useLocationStore((state) => state.isSelected);
 
-  const fetchRoadData = async () => {
-    try {
-      if (!token) {
-        console.error("Token not found");
-        return;
-      }
-      const roads = await getAllRoads(token);
-      console.log("data", roads);
-      setRoadData(roads);
-    } catch (err) {
-      console.error("Fetch error:", err);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchRoadData();
-  }, [token, roadData]);
-
-  if (roadData === null) {
-    return <div>Loading roads...</div>;
-  }
+  const tableData: RoadTable[] =
+    roads?.map((road) => {
+      const desaName =
+        desa.find((d) => d.id === road.desa_id)?.desa || "Unknown Desa";
+      const status =
+        road.kondisi_id == 1
+          ? "Baik"
+          : road.kondisi_id == 2
+          ? "Sedang"
+          : road.kondisi_id == 3
+          ? "Rusak"
+          : "Tidak tahu";
+      return {
+        id: road.id,
+        name: road.nama_ruas,
+        location: desaName,
+        condition: status,
+      };
+    }) ?? [];
 
   return (
-    <>
-      <div className="relative z-0 h-screen w-full">
-        <div className="absolute top-2.5 right-2.5 z-10">
-          <div className="w-full gap-2 flex flex-row">
-            {/* TODO: FIX the User menu dialog */}
-            {/* <UserAvatarDialog /> */}
-            <LogoutDialog />
-          </div>
-        </div>
-
-        <div className="absolute bottom-2.5 right-2.5 z-10">
-          <Button
-            variant="secondary"
-            className="hover:cursor-pointer"
-            onClick={() => navigate("add-road")}
-          >
-            Add Road
-          </Button>
-        </div>
-        <MapContainer
-          center={[-8.409518, 115.188919]}
-          zoom={10}
-          className="h-screen w-full"
-          style={{ zIndex: 0 }}
-          zoomControl={false}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-          {roadData.length > 0 &&
-            roadData.map((data) =>
-              Array.isArray(data.paths) ? (
-                <Polyline key={data.id} positions={data.paths}>
-                  <Popup>
-                    <div className="w-full min-w-full h-fit max-h-screen flex flex-col items-center justify-between">
-                      <h1 className="font-semibold">{data.nama_ruas}</h1>
-                      <p>{data.keterangan}</p>
-                      <DeleteRoadButton token={token as string} id={data.id} />
-                    </div>
-                  </Popup>
-                </Polyline>
-              ) : null
-            )}
-        </MapContainer>
+    <div className="flex flex-row-reverse gap-8 w-full h-screen p-8 overflow-hidden">
+      <div className="flex-1 relative border rounded-lg overflow-hidden">
+        {isSelected && <ViewedLocationInfo id={roadID} />}
+        <HomeMaps location={location} />
       </div>
-    </>
+
+      <div className="w-1/2 z-10 overflow-y-auto">
+        <TabularRoadData columns={roadTableColumns} data={tableData} />
+      </div>
+    </div>
   );
 }
 

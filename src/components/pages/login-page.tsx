@@ -3,7 +3,7 @@ import { LoginForm } from "../organisms/login-form";
 
 const Login = () => {
   return (
-    <div className="w-full h-screen flex gap-4 flex-col items-center justify-center bg-gray-200">
+    <div className="w-full h-screen flex gap-4 flex-col items-center justify-center bg-accent">
       <AuthTabs />
       <LoginForm />
     </div>

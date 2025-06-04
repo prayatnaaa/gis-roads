@@ -1,4 +1,4 @@
-type Coordinate = {
+export type Coordinate = {
   lat: number;
   lng: number;
 };
@@ -15,6 +15,12 @@ export type Road = {
   kondisi_id: number;
   jenisjalan_id: number;
   keterangan: string;
+};
+
+type GetRoadByIdProps = {
+  code: number;
+  status: "success" | "failed";
+  road?: Road;
 };
 
 function isValidCoordinateArray(data: any): data is Coordinate[] {
@@ -71,4 +77,40 @@ export async function getAllRoads(token: string): Promise<Road[]> {
   }
 
   return validRoads;
+}
+
+export async function getRoadById({
+  token,
+  id,
+}: {
+  token: string;
+  id: string;
+}): Promise<GetRoadByIdProps> {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/ruasjalan/${id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return { code: response.status, status: "failed" };
+    }
+
+    const data = await response.json();
+
+    return {
+      code: data.code,
+      status: data.status,
+      road: data.ruasjalan,
+    };
+  } catch (error) {
+    console.error("Error fetching road data:", error);
+    throw error;
+  }
 }
