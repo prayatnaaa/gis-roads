@@ -14,14 +14,13 @@ export const useRoadStore = create<RoadState>()((set) => ({
     try {
       const response = await getAllRoads(token);
 
-      if (!response) {
-        localStorage.removeItem("token");
+      if (response.code === 403) {
         set({ isError: true, roads: [] });
         return;
       }
 
       set({
-        roads: response,
+        roads: response.data,
         isError: false,
       });
     } catch (error) {

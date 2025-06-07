@@ -13,42 +13,41 @@ function App() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const location = useLocation();
+
   const region = useRegionStore((state) => state.fetchRegion);
-  const road = useRoadStore((state) => state.fetchRoad);
   const isRegionLoaded = useRegionStore((state) => state.isLoaded);
 
+  const road = useRoadStore((state) => state.fetchRoad);
+  const isError = useRoadStore((state) => state.isError);
+
   React.useEffect(() => {
-    if (token && location.pathname == "/") {
-      road(token);
+    if (isError) {
+      navigate("auth/login");
     }
-  }, [location.pathname, token]);
+  }, [isError, navigate]);
 
   React.useEffect(() => {
     const authRoutes = ["/auth/login", "/auth/register"];
 
     if (!token && !authRoutes.includes(location.pathname)) {
       navigate("/auth/login");
+      return;
     }
-  }, [token, navigate, location]);
 
-  React.useEffect(() => {
-    if (token && !isRegionLoaded) {
-      region(token);
+    if (token) {
+      if (!isRegionLoaded) region(token);
+      if (location.pathname === "/") road(token);
     }
-  }, []);
+  }, [token, location.pathname, isRegionLoaded, region, road, navigate]);
 
   return (
-    <>
-      <div>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/add-road" element={<AddRoad />} />
-          <Route path="/edit-road/:id" element={<EditRoad />} />
-          <Route path="auth/register" element={<Register />} />
-          <Route path="auth/login" element={<Login />} />
-        </Routes>
-      </div>
-    </>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/add-road" element={<AddRoad />} />
+      <Route path="/edit-road/:id" element={<EditRoad />} />
+      <Route path="auth/register" element={<Register />} />
+      <Route path="auth/login" element={<Login />} />
+    </Routes>
   );
 }
 

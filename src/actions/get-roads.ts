@@ -36,7 +36,11 @@ function isValidPolylineString(path: string): boolean {
   return typeof path === "string" && path.length > 0 && !path.includes("{");
 }
 
-export async function getAllRoads(token: string): Promise<Road[]> {
+export async function getAllRoads(token: string): Promise<{
+  message: string;
+  code: number;
+  data: Road[];
+}> {
   const response = await fetch(
     `${import.meta.env.VITE_API_BASE_URL}/ruasjalan`,
     {
@@ -49,7 +53,7 @@ export async function getAllRoads(token: string): Promise<Road[]> {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch roads");
+    return { message: "Something went wrong", code: response.status, data: [] };
   }
 
   const data = await response.json();
@@ -68,6 +72,7 @@ export async function getAllRoads(token: string): Promise<Road[]> {
         continue;
       }
     } catch {
+      console.log("hehhehe");
       //TODO: think later
     }
 
@@ -76,7 +81,11 @@ export async function getAllRoads(token: string): Promise<Road[]> {
     }
   }
 
-  return validRoads;
+  return {
+    message: "Successfully fetched roads",
+    code: 200,
+    data: validRoads,
+  };
 }
 
 export async function getRoadById({
