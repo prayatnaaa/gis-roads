@@ -25,20 +25,21 @@ export const useRegionStore = create<RegionState>()(
             const response = await getAllRegion(token);
 
             if (!response.success) {
-              set({ isError: true });
+              set((state) => ({ ...state, isError: true }));
               return;
             }
 
-            set({
+            set((state) => ({
+              ...state,
               provinsi: response.data?.provinsi,
               kabupaten: response.data?.kabupaten,
               kecamatan: response.data?.kecamatan,
               desa: response.data?.desa,
               isError: false,
               isLoaded: true,
-            });
+            }));
           } catch (error) {
-            set({ isError: true });
+            set((state) => ({ ...state, isError: true }));
           }
         },
       }),

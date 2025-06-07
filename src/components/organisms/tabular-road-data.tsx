@@ -3,7 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  // getFilteredRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   // type ColumnFiltersState,
 } from "@tanstack/react-table";
@@ -35,6 +35,7 @@ export function TabularRoadData({
   // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
   //   []
   // );
+
   const selectedId = useLocationStore((state) => state.id);
   const pageSize = 5;
   const [pagination, setPagination] = React.useState({
@@ -46,6 +47,7 @@ export function TabularRoadData({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     state: {
       pagination,

@@ -15,16 +15,25 @@ export const useRoadStore = create<RoadState>()((set) => ({
       const response = await getAllRoads(token);
 
       if (response.code === 403) {
-        set({ isError: true, roads: [] });
+        set((state) => ({
+          ...state,
+          roads: [],
+          isError: true,
+        }));
         return;
       }
 
-      set({
+      set((state) => ({
+        ...state,
         roads: response.data,
         isError: false,
-      });
+      }));
     } catch (error) {
-      set({ isError: true, roads: [] });
+      set((state) => ({
+        ...state,
+        roads: [],
+        isError: true,
+      }));
     }
   },
 }));
