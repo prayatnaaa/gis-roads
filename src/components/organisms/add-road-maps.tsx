@@ -2,7 +2,6 @@ import React from "react";
 import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { LatLngLiteral } from "leaflet";
-import AddRoadForm from "./add-road-form";
 import { CustomAlert } from "../atoms/custom-alert";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import "leaflet/dist/leaflet.css";
@@ -10,6 +9,7 @@ import * as L from "leaflet";
 import "leaflet";
 import "@geoman-io/leaflet-geoman-free";
 import { GeomanPolyline } from "../atoms/polyline";
+import RoadForm from "./road-form";
 
 const AddRoadMaps = () => {
   const [positions, setPositions] = React.useState<LatLngLiteral[]>([]);
@@ -33,7 +33,7 @@ const AddRoadMaps = () => {
           <CustomAlert desc="There has to be at least two points" />
         )}
       </div>
-      <AddRoadForm paths={positions} length={lengthInMeters} />
+      <RoadForm paths={positions} length={lengthInMeters} />
       <div className="relative z-0 w-full flex-shrink p-8">
         <MapContainer
           center={[-8.409518, 115.188919]}

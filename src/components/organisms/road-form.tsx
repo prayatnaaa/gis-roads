@@ -27,7 +27,7 @@ type AddRoadFormProps = {
   isEdit?: boolean;
 };
 
-const AddRoadForm = ({
+const RoadForm = ({
   paths,
   length,
   initialData,
@@ -133,8 +133,6 @@ const AddRoadForm = ({
   React.useEffect(() => {
     setValue("paths", paths);
     setValue("length", length);
-    console.log(paths);
-    console.log(length);
   }, [paths, length, setValue]);
 
   const filteredDistricts = React.useMemo(
@@ -347,4 +345,4 @@ const AddRoadForm = ({
   );
 };
 
-export default AddRoadForm;
+export default RoadForm;

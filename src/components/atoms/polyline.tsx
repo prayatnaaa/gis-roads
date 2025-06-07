@@ -1,6 +1,7 @@
 import { useMap } from "react-leaflet";
 import { useEffect } from "react";
 import type { LatLngLiteral } from "leaflet";
+import L from "leaflet";
 
 export const GeomanPolyline = ({
   onDraw,
@@ -41,7 +42,6 @@ export const GeomanPolyline = ({
     let editLayer: any = null;
 
     if (initialPath && initialPath.length > 0) {
-      const L = require("leaflet");
       editLayer = L.polyline(initialPath).addTo(map);
 
       editLayer.pm.enable({ allowSelfIntersection: false });
@@ -49,6 +49,8 @@ export const GeomanPolyline = ({
 
       editLayer.on("pm:edit", (e: any) => {
         const newLatLngs = e.layer.getLatLngs();
+        console.log("this is in polyline edit");
+        console.log(newLatLngs);
         onDraw(newLatLngs);
       });
     }

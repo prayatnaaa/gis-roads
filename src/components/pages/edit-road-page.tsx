@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import * as L from "leaflet";
-import AddRoadForm from "../organisms/add-road-form";
 import { getRoadById, type Road } from "@/actions/get-roads";
 import type { AddRoadFormData } from "@/lib/add-road-types";
 import { GeomanPolyline } from "../atoms/polyline";
 import { CustomAlert } from "../atoms/custom-alert";
+import RoadForm from "../organisms/road-form";
 
 type Coordinate = { lat: number; lng: number };
 
@@ -81,7 +81,7 @@ const EditRoad = () => {
         )}
       </div>
 
-      <AddRoadForm
+      <RoadForm
         paths={positions}
         length={lengthInMeters}
         initialData={initialData}
@@ -101,7 +101,13 @@ const EditRoad = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          <GeomanPolyline onDraw={(latlngs) => setPositions(latlngs)} />
+          <GeomanPolyline
+            initialPath={positions}
+            onDraw={(latlngs) => {
+              console.log("this is in edit road page");
+              setPositions(latlngs);
+            }}
+          />
 
           {positions.length > 0 && <Polyline positions={positions} />}
         </MapContainer>
