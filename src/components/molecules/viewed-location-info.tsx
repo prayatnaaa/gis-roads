@@ -41,7 +41,7 @@ export function ViewedLocationInfo({ id }: { id: string }) {
   const villages = useRegionStore((state) => state.desa);
   const village = (id: number): string => {
     const data = villages.find((v) => v.id === id);
-    return data?.desa as string;
+    return data?.value as string;
   };
   const resetLocation = useLocationStore((state) => state.resetLocation);
 
@@ -67,10 +67,6 @@ export function ViewedLocationInfo({ id }: { id: string }) {
             <strong>Condition</strong>
             {kondisiLabels[road.kondisi_id] || `ID ${road.kondisi_id}`}
           </div>
-          {/* <div className="flex flex-col">
-            <strong>Keterangan</strong>{" "}
-            <RoadDescDialog desc={road.keterangan} />
-          </div> */}
           <div className="flex flex-col">
             <strong>Existing</strong>
             {eksistingLabels[road.eksisting_id] || `ID ${road.eksisting_id}`}

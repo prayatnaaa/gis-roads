@@ -23,10 +23,25 @@ export const getAllRegion = async (token: string): Promise<RegionResult> => {
       status: data.code,
       message: data.status,
       data: {
-        provinsi: data.provinsi ?? [],
-        kabupaten: data.kabupaten ?? [],
-        kecamatan: data.kecamatan ?? [],
-        desa: data.desa ?? [],
+        provinsi: (data.provinsi ?? []).map((item: any) => ({
+          id: item.id,
+          value: item.provinsi,
+        })),
+        kabupaten: (data.kabupaten ?? []).map((item: any) => ({
+          id: item.id,
+          prov_id: item.prov_id,
+          value: item.kabupaten,
+        })),
+        kecamatan: (data.kecamatan ?? []).map((item: any) => ({
+          id: item.id,
+          kab_id: item.kab_id,
+          value: item.kecamatan,
+        })),
+        desa: (data.desa ?? []).map((item: any) => ({
+          id: item.id,
+          kec_id: item.kec_id,
+          value: item.desa,
+        })),
       },
     };
   } catch (error) {

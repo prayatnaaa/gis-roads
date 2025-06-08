@@ -188,7 +188,7 @@ const RoadForm = ({
               name="Select regency..."
               properties={kabupaten.map((k) => ({
                 id: k.id,
-                value: k.kabupaten,
+                value: k.value,
               }))}
               selectedId={regencyId || undefined}
               onChange={(selected) => {
@@ -203,7 +203,7 @@ const RoadForm = ({
                 name="Select district..."
                 properties={filteredDistricts.map((d) => ({
                   id: d.id,
-                  value: d.kecamatan,
+                  value: d.value,
                 }))}
                 selectedId={districtId || undefined}
                 onChange={(selected) => {
@@ -218,7 +218,7 @@ const RoadForm = ({
                 name="Select village..."
                 properties={filteredVillages.map((v) => ({
                   id: v.id,
-                  value: v.desa,
+                  value: v.value,
                 }))}
                 selectedId={initialData?.village_id}
                 onChange={(selected) => setValue("village_id", selected.id)}

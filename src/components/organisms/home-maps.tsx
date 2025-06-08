@@ -37,7 +37,7 @@ const HomeMaps = ({ location }: HomeMapsProps) => {
     if (!data) {
       return "Village unknown";
     }
-    return data.desa;
+    return data.value;
   };
 
   return (
