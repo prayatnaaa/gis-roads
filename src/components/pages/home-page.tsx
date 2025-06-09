@@ -6,10 +6,10 @@ import { useRoadStore } from "@/stores/road-data-stores";
 import HomeMaps from "../organisms/home-maps";
 import { useLocationStore } from "@/stores/map-location-stores";
 import { ViewedLocationInfo } from "../molecules/viewed-location-info";
-import { LogoutDialog } from "../molecules/logout-dialog";
 import { FilterDialog } from "../molecules/filter-dialog";
 import type { PlaceValueProps } from "@/lib/region-type";
 import React from "react";
+import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
 
 function Home() {
   const roads = useRoadStore((state) => state.roads);
@@ -89,8 +89,9 @@ function Home() {
           filterButton={<FilterDialog onFilter={setFilters} />}
         />
 
-        <div className="absolute bottom-2.5 left-2.5">
-          <LogoutDialog />
+        <div className="absolute bottom-0 left-0">
+          {/* <LogoutDialog /> */}
+          <UserAvatarDialog />
         </div>
       </div>
     </div>
