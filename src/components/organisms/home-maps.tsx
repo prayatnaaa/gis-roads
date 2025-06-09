@@ -5,15 +5,16 @@ import {
   Tooltip,
   useMap,
 } from "react-leaflet";
-import { useRoadStore } from "@/stores/road-data-stores";
 import { useEffect } from "react";
 import { getRoadStyle } from "@/actions/get-road-styles";
 import { useLocationStore } from "@/stores/map-location-stores";
 import React from "react";
 import { useRegionStore } from "@/stores/region-stores";
+import type { Road } from "@/actions/get-roads";
 
 type HomeMapsProps = {
   location: [number, number];
+  roads: Road[];
 };
 
 const ChangeView = ({ center }: { center: [number, number] }) => {
@@ -27,8 +28,7 @@ const ChangeView = ({ center }: { center: [number, number] }) => {
   return null;
 };
 
-const HomeMaps = ({ location }: HomeMapsProps) => {
-  const roads = useRoadStore((state) => state.roads);
+const HomeMaps = ({ location, roads }: HomeMapsProps) => {
   const setLocId = useLocationStore((state) => state.setLocation);
   const selectedLocId = useLocationStore((state) => state.id);
   const villages = useRegionStore((state) => state.desa);

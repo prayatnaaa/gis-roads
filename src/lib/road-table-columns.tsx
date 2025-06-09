@@ -1,3 +1,4 @@
+import type { Coordinate } from "@/actions/get-roads";
 import ViewLocationButton from "@/components/atoms/view-location-button";
 import DeleteRoadButton from "@/components/molecules/delete-road-button";
 
@@ -8,6 +9,11 @@ export type RoadTable = {
   name: string;
   location: string;
   condition: string;
+  width: number;
+  length: number;
+  existing: string;
+  road_type: string;
+  paths: string | Coordinate[];
 };
 
 export const roadTableColumns: ColumnDef<RoadTable>[] = [

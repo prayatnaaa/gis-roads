@@ -22,8 +22,6 @@ import AddRoadButton from "../atoms/add-road-button";
 import { useLocationStore } from "@/stores/map-location-stores";
 import type { RoadTable } from "@/lib/road-table-columns";
 import { Button } from "../ui/button";
-import { FilterDialog } from "../molecules/filter-dialog";
-import type { PlaceValueProps } from "@/lib/region-type";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -63,6 +61,28 @@ export function TabularRoadData({
     },
   });
 
+  React.useEffect(() => {
+    const id = Number(selectedId);
+
+    if (!id || data.length === 0) return;
+
+    const rowIndex = data.findIndex((item) => item.id === id);
+
+    if (rowIndex !== -1) {
+      const pageIndex = Math.floor(rowIndex / pageSize);
+
+      console.log(table.getState().pagination.pageIndex);
+
+      if (table.getState().pagination.pageIndex !== pageIndex) {
+        console.log(pageIndex);
+
+        setTimeout(() => {
+          table.setPageIndex(pageIndex);
+        }, 0);
+      }
+    }
+  }, [selectedId, data, pageSize, table]);
+
   return (
     <div>
       <div className="container border rounded-md p-2">
@@ -77,15 +97,6 @@ export function TabularRoadData({
           />
 
           <div className="flex gap-4 items-center">
-            <FilterDialog
-              onFilter={function (filters: {
-                roadType: PlaceValueProps | null;
-                roadCondition: PlaceValueProps | null;
-                existing: PlaceValueProps | null;
-              }): void {
-                throw new Error("Function not implemented.");
-              }}
-            />
             <AddRoadButton />
           </div>
         </div>
