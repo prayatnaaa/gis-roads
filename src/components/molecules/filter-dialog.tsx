@@ -77,6 +77,7 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(selectedType);
     onFilter({
       roadType: selectedType,
       roadCondition: selectedCondition,
@@ -99,15 +100,18 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
           <div className="grid gap-4 py-4">
             <CustomSelect
               values={roadTypeOptions}
+              value={selectedType}
               label="Road Type"
               onChange={setSelectedType}
             />
             <CustomSelect
               values={roadConditionOptions}
+              value={selectedCondition}
               label="Road Condition"
               onChange={setSelectedCondition}
             />
             <CustomSelect
+              value={selectedExisting}
               values={existingOptions}
               label="Existing"
               onChange={setSelectedExisting}

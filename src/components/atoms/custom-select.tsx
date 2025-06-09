@@ -12,22 +12,33 @@ import {
 const CustomSelect = ({
   values,
   label,
+  value,
   onChange,
 }: {
   values: PlaceValueProps[] | undefined;
   label: string;
-  onChange: (value: any) => void;
+  value: PlaceValueProps | null;
+  onChange: (value: PlaceValueProps | null) => void;
 }) => {
+  const handleChange = (val: string) => {
+    const selected = values?.find((item) => String(item.id) === val) ?? null;
+    onChange(selected);
+  };
+
   return (
-    <Select>
+    <Select
+      onValueChange={handleChange}
+      value={value ? String(value.id) : undefined}
+    >
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select" />
+        <SelectValue placeholder={`Select ${label}`} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>{label}</SelectLabel>
-          {values?.map((item, index) => (
-            <SelectItem value={String(item.id)} key={index} onChange={onChange}>
+          <SelectItem value="CLEAR">Clear</SelectItem>
+          {values?.map((item) => (
+            <SelectItem value={String(item.id)} key={item.id}>
               {item.value}
             </SelectItem>
           ))}
