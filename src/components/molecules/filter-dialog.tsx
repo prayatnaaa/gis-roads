@@ -27,7 +27,8 @@ interface FilterDialogProps {
 }
 
 export function FilterDialog({ onFilter }: FilterDialogProps) {
-  const token = localStorage.getItem("token");
+  const [token, setToken] = React.useState<string | null>(null);
+  // const token = localStorage.getItem("token");
 
   const [roadTypeOptions, setRoadTypeOptions] = React.useState<
     PlaceValueProps[]
@@ -47,6 +48,11 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
     React.useState<PlaceValueProps | null>(null);
 
   React.useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  }, []);
+
+  React.useEffect(() => {
+    if (!token) return;
     const fetchFilters = async () => {
       try {
         const [typeRes, condRes, existRes] = await Promise.all([
@@ -73,26 +79,32 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
     };
 
     fetchFilters();
-  }, []);
+  }, [token]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(selectedType);
-    onFilter({
-      roadType: selectedType,
-      roadCondition: selectedCondition,
-      existing: selectedExisting,
-    });
-  };
+  const handleSubmit = React.useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      onFilter({
+        roadType: selectedType,
+        roadCondition: selectedCondition,
+        existing: selectedExisting,
+      });
+    },
+    [selectedType, selectedCondition, selectedExisting, onFilter]
+  );
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" className="hover:cursor-pointer">
           <Funnel />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent
+        className="sm:max-w-[425px]"
+        aria-description="filters-dialog"
+        aria-describedby="filters"
+      >
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Filter Roads</DialogTitle>

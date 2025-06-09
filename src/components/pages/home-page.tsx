@@ -83,8 +83,11 @@ function Home() {
       </div>
 
       <div className="w-1/2 z-10 overflow-y-auto relative">
-        <FilterDialog onFilter={setFilters} />
-        <TabularRoadData columns={roadTableColumns} data={tableData} />
+        <TabularRoadData
+          columns={roadTableColumns}
+          data={tableData}
+          filterButton={<FilterDialog onFilter={setFilters} />}
+        />
 
         <div className="absolute bottom-2.5 left-2.5">
           <LogoutDialog />

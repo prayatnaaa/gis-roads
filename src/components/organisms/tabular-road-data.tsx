@@ -26,11 +26,13 @@ import { Button } from "../ui/button";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  filterButton?: React.ReactNode;
 }
 
 export function TabularRoadData({
   columns,
   data,
+  filterButton,
 }: DataTableProps<RoadTable, unknown>) {
   // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
   //   []
@@ -97,6 +99,7 @@ export function TabularRoadData({
           />
 
           <div className="flex gap-4 items-center">
+            {filterButton}
             <AddRoadButton />
           </div>
         </div>
