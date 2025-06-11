@@ -104,7 +104,6 @@ const EditRoad = () => {
           <GeomanPolyline
             initialPath={positions}
             onDraw={(latlngs) => {
-              console.log("this is in edit road page");
               setPositions(latlngs);
             }}
           />

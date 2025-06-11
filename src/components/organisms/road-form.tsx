@@ -25,6 +25,7 @@ type AddRoadFormProps = {
   length: number;
   initialData?: Partial<AddRoadFormData> & { id?: number };
   isEdit?: boolean;
+  input?: React.ReactNode;
 };
 
 const RoadForm = ({
@@ -32,6 +33,7 @@ const RoadForm = ({
   length,
   initialData,
   isEdit = false,
+  input,
 }: AddRoadFormProps) => {
   const {
     register,
@@ -177,6 +179,7 @@ const RoadForm = ({
           {isEdit ? "Edit Road" : "Add Road"}
         </h1>
       </div>
+      {input}
 
       <form
         onSubmit={handleSubmit(onSubmit)}
