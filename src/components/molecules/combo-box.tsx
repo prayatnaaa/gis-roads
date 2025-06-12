@@ -23,6 +23,7 @@ type ComboboxProps = {
   properties: PlaceValueProps[];
   onChange?: (selected: PlaceValueProps) => void;
   selectedId?: number;
+  isDisable?: boolean;
 };
 
 export function Combobox({
@@ -30,6 +31,7 @@ export function Combobox({
   properties,
   onChange,
   selectedId,
+  isDisable,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
@@ -47,7 +49,8 @@ export function Combobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          disabled={isDisable}
+          variant={isDisable ? "secondary" : "outline"}
           role="combobox"
           aria-expanded={open}
           className={`w-[200px] justify-between ${

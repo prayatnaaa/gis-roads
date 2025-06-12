@@ -18,14 +18,16 @@ export function NominatimInput({ onSearch }: NominatimInputProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full min-w-full items-center gap-2 z-10"
+      className="flex w-full items-center gap-2 z-10"
     >
-      <Input
-        type="text"
-        placeholder="Search location"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+      <div className="flex-1">
+        <Input
+          type="text"
+          placeholder="Search location"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
       <Button type="submit" variant="outline">
         Search
       </Button>

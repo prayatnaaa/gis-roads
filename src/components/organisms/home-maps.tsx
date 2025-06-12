@@ -107,6 +107,7 @@ const HomeMaps = ({ location, roads }: HomeMapsProps) => {
               >
                 {" "}
                 <Tooltip
+                  sticky
                   direction="top"
                   offset={[0, -10]}
                   opacity={1}

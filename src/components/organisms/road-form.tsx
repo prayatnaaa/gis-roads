@@ -201,32 +201,30 @@ const RoadForm = ({
               }}
             />
 
-            {filteredDistricts.length > 0 && (
-              <Combobox
-                name="Select district..."
-                properties={filteredDistricts.map((d) => ({
-                  id: d.id,
-                  value: d.value,
-                }))}
-                selectedId={districtId || undefined}
-                onChange={(selected) => {
-                  setDistrictId(selected.id);
-                  setValue("village_id", undefined as any);
-                }}
-              />
-            )}
+            <Combobox
+              isDisable={filteredDistricts.length <= 0}
+              name="Select district..."
+              properties={filteredDistricts.map((d) => ({
+                id: d.id,
+                value: d.value,
+              }))}
+              selectedId={districtId || undefined}
+              onChange={(selected) => {
+                setDistrictId(selected.id);
+                setValue("village_id", undefined as any);
+              }}
+            />
 
-            {filteredVillages.length > 0 && (
-              <Combobox
-                name="Select village..."
-                properties={filteredVillages.map((v) => ({
-                  id: v.id,
-                  value: v.value,
-                }))}
-                selectedId={initialData?.village_id}
-                onChange={(selected) => setValue("village_id", selected.id)}
-              />
-            )}
+            <Combobox
+              isDisable={filteredVillages.length <= 0}
+              name="Select village..."
+              properties={filteredVillages.map((v) => ({
+                id: v.id,
+                value: v.value,
+              }))}
+              selectedId={initialData?.village_id}
+              onChange={(selected) => setValue("village_id", selected.id)}
+            />
 
             {errors.village_id && (
               <p className="text-red-500 text-sm">
