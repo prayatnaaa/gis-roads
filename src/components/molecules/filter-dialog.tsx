@@ -212,6 +212,7 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
                       roadCondition: [],
                       existing: [],
                     });
+                    setIsOpen(false);
                   }}
                   className="mr-2"
                 >

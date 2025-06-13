@@ -2,10 +2,9 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
-  useReactTable,
   getFilteredRowModel,
   getPaginationRowModel,
-  // type ColumnFiltersState,
+  useReactTable,
 } from "@tanstack/react-table";
 
 import {
@@ -34,16 +33,15 @@ export function TabularRoadData({
   data,
   filterButton,
 }: DataTableProps<RoadTable, unknown>) {
-  // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-  //   []
-  // );
-
   const selectedId = useLocationStore((state) => state.id);
   const pageSize = 5;
+
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize,
   });
+
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
     data,
@@ -51,9 +49,19 @@ export function TabularRoadData({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    globalFilterFn: (row, _, filterValue) => {
+      const searchableColumns = ["name", "location"];
+      return searchableColumns.some((key) =>
+        String(row.getValue(key) ?? "")
+          .toLowerCase()
+          .includes(String(filterValue).toLowerCase())
+      );
+    },
     state: {
       pagination,
+      globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     initialState: {
       pagination: {
@@ -65,28 +73,14 @@ export function TabularRoadData({
 
   React.useEffect(() => {
     const id = Number(selectedId);
-
     if (!id || data.length === 0) return;
 
     const rowIndex = data.findIndex((item) => item.id === id);
-
     if (rowIndex !== -1) {
       const pageIndex = Math.floor(rowIndex / pageSize);
-
-      console.log(table.getState().pagination.pageIndex);
-      console.log(pageIndex);
-
-      if (table.getState().pagination.pageIndex !== pageIndex) {
-        console.log(pageIndex);
-
-        setTimeout(() => {
-          table.setPageIndex(pageIndex);
-        }, 0);
-      } else {
-        setTimeout(() => {
-          table.setPageIndex(pageIndex);
-        }, 0);
-      }
+      setTimeout(() => {
+        table.setPageIndex(pageIndex);
+      }, 0);
     }
   }, [selectedId, data, pageSize, table]);
 
@@ -95,11 +89,9 @@ export function TabularRoadData({
       <div className="container border rounded-md p-2">
         <div className="w-full sm:flex flex-row justify-between sm:mb-4">
           <Input
-            placeholder="Filter locations..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
+            placeholder="Search by name or location..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
             className="max-w-sm"
           />
 
@@ -108,6 +100,8 @@ export function TabularRoadData({
             <AddRoadButton />
           </div>
         </div>
+
+        {/* Table */}
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
