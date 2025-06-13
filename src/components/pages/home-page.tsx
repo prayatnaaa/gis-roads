@@ -51,8 +51,6 @@ function Home() {
       const desaName =
         desa.find((d) => d.id === road.desa_id)?.value || "Unknown Desa";
 
-      console.log(desa);
-
       const roadType =
         road.jenisjalan_id == 1
           ? "Desa"

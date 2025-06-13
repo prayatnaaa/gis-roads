@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 import { useRegionStore } from "@/stores/region-stores";
 import { updateRoad } from "@/actions/edit-road";
+import { lengthFormatter } from "@/lib/length-formatter";
 
 type AddRoadFormProps = {
   paths: { lat: number; lng: number }[];
@@ -330,7 +331,11 @@ const RoadForm = ({
             <Label htmlFor="length" className="opacity-60">
               Length (m)
             </Label>
-            <Input disabled placeholder="Length" value={watchedLength || ""} />
+            <Input
+              disabled
+              placeholder="Length"
+              value={lengthFormatter(watchedLength) || ""}
+            />
           </div>
         </div>
 

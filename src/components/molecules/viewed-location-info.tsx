@@ -11,6 +11,7 @@ import { X } from "lucide-react";
 import EditRoadButton from "../atoms/edit-road-button";
 import { RoadDescDialog } from "./road-desc-dialog";
 import { useRegionStore } from "@/stores/region-stores";
+import { lengthFormatter } from "@/lib/length-formatter";
 
 const kondisiLabels: Record<number, string> = {
   1: "Baik",
@@ -80,8 +81,7 @@ export function ViewedLocationInfo({ id }: { id: string }) {
             <strong>Width (m):</strong> {road.lebar}
           </div>
           <div className="flex flex-col">
-            <strong>Length (m)</strong>{" "}
-            {Math.round(road.panjang).toLocaleString()}
+            <strong>Length (m)</strong> {lengthFormatter(road.panjang)}
           </div>
         </div>
         <div className="flex flex-row gap-2 items-center self-end">

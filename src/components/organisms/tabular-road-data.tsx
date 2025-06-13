@@ -74,10 +74,15 @@ export function TabularRoadData({
       const pageIndex = Math.floor(rowIndex / pageSize);
 
       console.log(table.getState().pagination.pageIndex);
+      console.log(pageIndex);
 
       if (table.getState().pagination.pageIndex !== pageIndex) {
         console.log(pageIndex);
 
+        setTimeout(() => {
+          table.setPageIndex(pageIndex);
+        }, 0);
+      } else {
         setTimeout(() => {
           table.setPageIndex(pageIndex);
         }, 0);
