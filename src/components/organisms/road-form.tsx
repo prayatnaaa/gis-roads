@@ -155,6 +155,13 @@ const RoadForm = ({
   const onSubmit = async (data: AddRoadFormData) => {
     if (!token) return;
 
+    const currentLength = watch("length");
+
+    if (!currentLength || currentLength === 0) {
+      toast.error("You should fill the paths");
+      return;
+    }
+
     const response = isEdit
       ? await updateRoad(initialData?.id!, data, token)
       : await addRoad(data, token);

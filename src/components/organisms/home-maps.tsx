@@ -60,7 +60,7 @@ const HomeMaps = ({ location, roads }: HomeMapsProps) => {
                   <Polyline
                     positions={data.paths.map((p) => [p.lat, p.lng])}
                     pathOptions={{
-                      color: "cyan",
+                      ...getRoadStyle(data.jenisjalan_id, data.kondisi_id),
                       weight: 20,
                       opacity: 0.3,
                     }}
@@ -69,7 +69,7 @@ const HomeMaps = ({ location, roads }: HomeMapsProps) => {
                   <Polyline
                     positions={data.paths.map((p) => [p.lat, p.lng])}
                     pathOptions={{
-                      color: "cyan",
+                      ...getRoadStyle(data.jenisjalan_id, data.kondisi_id),
                       weight: 14,
                       opacity: 0.5,
                     }}

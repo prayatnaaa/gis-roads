@@ -57,7 +57,7 @@ const AddRoadMaps = () => {
   return (
     <div className="w-full h-screen flex flex-row">
       <div className="absolute bottom-[40px] right-[40px] z-20">
-        {positions.length < 2 && (
+        {positions.length === 0 && (
           <CustomAlert desc="There has to be at least two points" />
         )}
       </div>
