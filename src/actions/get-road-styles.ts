@@ -6,6 +6,10 @@ export const getRoadStyle = (roadType: number, roadCondition: number) => {
     dashArray = "8 8";
   }
 
+  if (roadCondition == 2) {
+    dashArray = "4 4";
+  }
+
   switch (roadType) {
     case 1:
       color = "red";

@@ -1,58 +1,75 @@
+import { create } from "zustand";
+import localforage from "localforage";
 import { getAllRegion } from "@/actions/get-all-region";
 import type { AllRegionProps } from "@/lib/region-type";
-import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { isExpired } from "@/lib/cache-utils";
 
 interface RegionState extends AllRegionProps {
-  isError: boolean;
   isLoaded: boolean;
-  fetchRegion: (token: string) => void;
+  isError: boolean;
+  fetchRegion: (token: string) => Promise<void>;
 }
 
-export const useRegionStore = create<RegionState>()(
-  devtools(
-    persist(
-      (set, get) => ({
-        provinsi: [],
-        kecamatan: [],
-        kabupaten: [],
-        desa: [],
-        isError: false,
-        isLoaded: false,
-        fetchRegion: async (token: string) => {
-          try {
-            if (get().isLoaded) return;
-            const response = await getAllRegion(token);
+interface CachedRegionData extends AllRegionProps {
+  timestamp: number;
+}
 
-            if (!response.success) {
-              set((state) => ({ ...state, isError: true }));
-              return;
-            }
+const REGION_CACHE_KEY = "region-data";
+const EXPIRY_DURATION = 1000 * 60 * 60 * 24 * 7;
 
-            set((state) => ({
-              ...state,
-              provinsi: response.data?.provinsi,
-              kabupaten: response.data?.kabupaten,
-              kecamatan: response.data?.kecamatan,
-              desa: response.data?.desa,
-              isError: false,
-              isLoaded: true,
-            }));
-          } catch (error) {
-            set((state) => ({ ...state, isError: true }));
-          }
-        },
-      }),
-      {
-        name: "region-storage",
-        partialize: (state) => ({
-          provinsi: state.provinsi,
-          kabupaten: state.kabupaten,
-          kecamatan: state.kecamatan,
-          desa: state.desa,
-          isLoaded: state.isLoaded,
-        }),
+export const useRegionStore = create<RegionState>((set) => ({
+  provinsi: [],
+  kabupaten: [],
+  kecamatan: [],
+  desa: [],
+  isLoaded: false,
+  isError: false,
+
+  fetchRegion: async (token: string) => {
+    try {
+      const cached = await localforage.getItem<CachedRegionData>(
+        REGION_CACHE_KEY
+      );
+
+      if (cached && !isExpired(cached.timestamp, EXPIRY_DURATION)) {
+        set({
+          provinsi: cached.provinsi,
+          kabupaten: cached.kabupaten,
+          kecamatan: cached.kecamatan,
+          desa: cached.desa,
+          isLoaded: true,
+          isError: false,
+        });
+        return;
       }
-    )
-  )
-);
+
+      const response = await getAllRegion(token);
+      if (!response.success || !response.data) {
+        set({ isError: true });
+        return;
+      }
+
+      const freshData: CachedRegionData = {
+        provinsi: response.data.provinsi,
+        kabupaten: response.data.kabupaten,
+        kecamatan: response.data.kecamatan,
+        desa: response.data.desa,
+        timestamp: Date.now(),
+      };
+
+      await localforage.setItem(REGION_CACHE_KEY, freshData);
+
+      set({
+        provinsi: freshData.provinsi,
+        kabupaten: freshData.kabupaten,
+        kecamatan: freshData.kecamatan,
+        desa: freshData.desa,
+        isLoaded: true,
+        isError: false,
+      });
+    } catch (error) {
+      console.error("Fetch region failed:", error);
+      set({ isError: true });
+    }
+  },
+}));

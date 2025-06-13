@@ -16,7 +16,6 @@ import type { PlaceValueProps } from "@/lib/region-type";
 import { Funnel } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
-import CustomSelect from "../atoms/custom-select";
 import { MultiSelect } from "./multi-select";
 
 interface FilterDialogProps {
@@ -40,6 +39,7 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
     PlaceValueProps[]
   >([]);
 
+  // Nilai yang disimpan setelah Apply
   const [selectedType, setSelectedType] = React.useState<PlaceValueProps[]>([]);
   const [selectedCondition, setSelectedCondition] = React.useState<
     PlaceValueProps[]
@@ -48,18 +48,32 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
     PlaceValueProps[]
   >([]);
 
+  // Nilai sementara di dialog
+  const [tempSelectedType, setTempSelectedType] = React.useState<
+    PlaceValueProps[]
+  >([]);
+  const [tempSelectedCondition, setTempSelectedCondition] = React.useState<
+    PlaceValueProps[]
+  >([]);
+  const [tempSelectedExisting, setTempSelectedExisting] = React.useState<
+    PlaceValueProps[]
+  >([]);
+
+  const [isOpen, setIsOpen] = React.useState(false);
+
   React.useEffect(() => {
     setToken(localStorage.getItem("token"));
   }, []);
 
   React.useEffect(() => {
     if (!token) return;
+
     const fetchFilters = async () => {
       try {
         const [typeRes, condRes, existRes] = await Promise.all([
-          getRoadType(token as string),
-          getRoadCondition(token as string),
-          getExistingRoad(token as string),
+          getRoadType(token),
+          getRoadCondition(token),
+          getExistingRoad(token),
         ]);
 
         if (
@@ -82,20 +96,34 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
     fetchFilters();
   }, [token]);
 
-  const handleSubmit = React.useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      onFilter({
-        roadType: selectedType,
-        roadCondition: selectedCondition,
-        existing: selectedExisting,
-      });
-    },
-    [selectedType, selectedCondition, selectedExisting, onFilter]
-  );
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+
+    if (open) {
+      setTempSelectedType(selectedType);
+      setTempSelectedCondition(selectedCondition);
+      setTempSelectedExisting(selectedExisting);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setSelectedType(tempSelectedType);
+    setSelectedCondition(tempSelectedCondition);
+    setSelectedExisting(tempSelectedExisting);
+
+    onFilter({
+      roadType: tempSelectedType,
+      roadCondition: tempSelectedCondition,
+      existing: tempSelectedExisting,
+    });
+
+    setIsOpen(false);
+  };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon" className="hover:cursor-pointer">
           <Funnel />
@@ -110,39 +138,60 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
           <DialogHeader>
             <DialogTitle>Filter Roads</DialogTitle>
           </DialogHeader>
+
           <div className="grid grid-cols-3 gap-4 py-4">
-            {/* <CustomSelect
-              values={roadTypeOptions}
-              value={selectedType}
-              label="Road Type"
-              onChange={setSelectedType}
-            /> */}
-            <MultiSelect
-              value={selectedCondition.map((opt) => String(opt.value))}
-              options={roadConditionOptions.map((opt) => ({
-                label: opt.value ?? opt.id ?? String(opt.value),
-                value: String(opt.value),
-              }))}
-              onValueChange={(values: string[]) => {
-                const selected = roadConditionOptions.filter((opt) =>
-                  values.includes(String(opt.value))
-                );
-                setSelectedCondition(selected);
-              }}
-            />
-            {/* <CustomSelect
-              values={roadConditionOptions}
-              value={selectedCondition}
-              label="Road Condition"
-              onChange={setSelectedCondition}
-            /> */}
-            {/* <CustomSelect
-              value={selectedExisting}
-              values={existingOptions}
-              label="Existing"
-              onChange={setSelectedExisting}
-            /> */}
+            <div className="grid gap-1">
+              <p className="text-xs opacity-70">Condition</p>
+              <MultiSelect
+                value={tempSelectedCondition.map((opt) => String(opt.value))}
+                options={roadConditionOptions.map((opt) => ({
+                  label: opt.value ?? opt.id ?? String(opt.value),
+                  value: String(opt.value),
+                }))}
+                onValueChange={(values: string[]) => {
+                  const selected = roadConditionOptions.filter((opt) =>
+                    values.includes(String(opt.value))
+                  );
+                  setTempSelectedCondition(selected);
+                }}
+              />
+            </div>
+
+            <div className="grid gap-1">
+              <p className="text-xs opacity-70">Existing</p>
+              <MultiSelect
+                value={tempSelectedExisting.map((opt) => String(opt.value))}
+                options={existingOptions.map((opt) => ({
+                  label: opt.value ?? opt.id ?? String(opt.value),
+                  value: String(opt.value),
+                }))}
+                onValueChange={(values: string[]) => {
+                  const selected = existingOptions.filter((opt) =>
+                    values.includes(String(opt.value))
+                  );
+                  setTempSelectedExisting(selected);
+                }}
+              />
+            </div>
+
+            <div className="grid gap-1">
+              <p className="text-xs opacity-70">Type</p>
+              <MultiSelect
+                value={tempSelectedType.map((opt) => String(opt.value))}
+                options={roadTypeOptions.map((opt) => ({
+                  label: opt.value ?? opt.id ?? String(opt.value),
+                  value: String(opt.value),
+                }))}
+                onValueChange={(values: string[]) => {
+                  const selected = roadTypeOptions.filter((opt) =>
+                    values.includes(String(opt.value))
+                  );
+                  setTempSelectedType(selected);
+                }}
+              />
+            </div>
           </div>
+
           <DialogFooter>
             <Button type="submit">Apply Filters</Button>
           </DialogFooter>
