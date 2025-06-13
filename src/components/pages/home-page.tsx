@@ -10,6 +10,7 @@ import { FilterDialog } from "../molecules/filter-dialog";
 import type { PlaceValueProps } from "@/lib/region-type";
 import React from "react";
 import { UserAvatarDialog } from "../molecules/user-avatar-dialog";
+import Legend from "../atoms/legend";
 
 function Home() {
   const roads = useRoadStore((state) => state.roads);
@@ -86,7 +87,9 @@ function Home() {
     <div className="flex flex-row-reverse gap-8 w-full h-screen p-8 overflow-hidden">
       <div className="flex-1 relative border rounded-lg overflow-hidden">
         {isSelected && <ViewedLocationInfo id={roadID} />}
+
         <HomeMaps location={location} roads={filteredRoads} />
+        <Legend />
       </div>
 
       <div className="w-1/2 z-10 overflow-y-auto relative">

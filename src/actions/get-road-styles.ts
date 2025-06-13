@@ -3,11 +3,11 @@ export const getRoadStyle = (roadType: number, roadCondition: number) => {
   let dashArray: string | undefined = undefined;
 
   if (roadCondition == 3) {
-    dashArray = "8 8";
+    dashArray = "4 4";
   }
 
   if (roadCondition == 2) {
-    dashArray = "4 4";
+    dashArray = "8 8";
   }
 
   switch (roadType) {

@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { registerSchema, type TRegisterSchema } from "@/lib/register-types";
 import { goRegister } from "@/actions/register";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function RegisterForm() {
   const {
@@ -41,6 +42,7 @@ export function RegisterForm() {
         });
         return;
       }
+      toast("Registered successfuly!");
       navigate("/auth/login");
     } catch (error) {
       console.error(error);

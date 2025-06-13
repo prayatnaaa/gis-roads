@@ -26,7 +26,7 @@ export const GeomanPolyline = ({
       editMode: true,
       dragMode: false,
       cutPolygon: false,
-      removalMode: true, // ✅ aktifkan removal mode
+      removalMode: true,
       rotateMode: false,
       drawText: false,
     });
