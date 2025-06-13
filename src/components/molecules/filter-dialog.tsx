@@ -17,18 +17,18 @@ import { Funnel } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 import CustomSelect from "../atoms/custom-select";
+import { MultiSelect } from "./multi-select";
 
 interface FilterDialogProps {
   onFilter: (filters: {
-    roadType: PlaceValueProps | null;
-    roadCondition: PlaceValueProps | null;
-    existing: PlaceValueProps | null;
+    roadType: PlaceValueProps[];
+    roadCondition: PlaceValueProps[];
+    existing: PlaceValueProps[];
   }) => void;
 }
 
 export function FilterDialog({ onFilter }: FilterDialogProps) {
   const [token, setToken] = React.useState<string | null>(null);
-  // const token = localStorage.getItem("token");
 
   const [roadTypeOptions, setRoadTypeOptions] = React.useState<
     PlaceValueProps[]
@@ -40,12 +40,13 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
     PlaceValueProps[]
   >([]);
 
-  const [selectedType, setSelectedType] =
-    React.useState<PlaceValueProps | null>(null);
-  const [selectedCondition, setSelectedCondition] =
-    React.useState<PlaceValueProps | null>(null);
-  const [selectedExisting, setSelectedExisting] =
-    React.useState<PlaceValueProps | null>(null);
+  const [selectedType, setSelectedType] = React.useState<PlaceValueProps[]>([]);
+  const [selectedCondition, setSelectedCondition] = React.useState<
+    PlaceValueProps[]
+  >([]);
+  const [selectedExisting, setSelectedExisting] = React.useState<
+    PlaceValueProps[]
+  >([]);
 
   React.useEffect(() => {
     setToken(localStorage.getItem("token"));
@@ -101,7 +102,7 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-[425px]"
+        className="sm:w-full min-w-fit"
         aria-description="filters-dialog"
         aria-describedby="filters"
       >
@@ -109,25 +110,38 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
           <DialogHeader>
             <DialogTitle>Filter Roads</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <CustomSelect
+          <div className="grid grid-cols-3 gap-4 py-4">
+            {/* <CustomSelect
               values={roadTypeOptions}
               value={selectedType}
               label="Road Type"
               onChange={setSelectedType}
+            /> */}
+            <MultiSelect
+              value={selectedCondition.map((opt) => String(opt.value))}
+              options={roadConditionOptions.map((opt) => ({
+                label: opt.value ?? opt.id ?? String(opt.value),
+                value: String(opt.value),
+              }))}
+              onValueChange={(values: string[]) => {
+                const selected = roadConditionOptions.filter((opt) =>
+                  values.includes(String(opt.value))
+                );
+                setSelectedCondition(selected);
+              }}
             />
-            <CustomSelect
+            {/* <CustomSelect
               values={roadConditionOptions}
               value={selectedCondition}
               label="Road Condition"
               onChange={setSelectedCondition}
-            />
-            <CustomSelect
+            /> */}
+            {/* <CustomSelect
               value={selectedExisting}
               values={existingOptions}
               label="Existing"
               onChange={setSelectedExisting}
-            />
+            /> */}
           </div>
           <DialogFooter>
             <Button type="submit">Apply Filters</Button>

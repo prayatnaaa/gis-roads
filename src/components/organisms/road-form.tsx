@@ -195,6 +195,7 @@ const RoadForm = ({
               }))}
               selectedId={regencyId || undefined}
               onChange={(selected) => {
+                console.log(selected);
                 setRegencyId(selected.id);
                 setDistrictId(null);
                 setValue("village_id", undefined as any);

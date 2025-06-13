@@ -32,7 +32,7 @@ export function RegionSheet({ data }: RegionSheetProps) {
             {provinsi.map((prov) => (
               <div key={prov.id} className="mb-6">
                 <div className="font-bold text-xl text-primary">
-                  {prov.provinsi}
+                  {prov.value}
                 </div>
 
                 {kabupaten
@@ -43,7 +43,7 @@ export function RegionSheet({ data }: RegionSheetProps) {
                       className="ml-4 mt-2 border-l-2 border-border pl-4"
                     >
                       <div className="text-base font-semibold text-foreground">
-                        {kab.kabupaten}
+                        {kab.value}
                       </div>
 
                       {kecamatan
@@ -54,7 +54,7 @@ export function RegionSheet({ data }: RegionSheetProps) {
                             className="ml-4 mt-2 border-l-2 border-muted pl-4"
                           >
                             <div className="text-sm font-medium text-foreground">
-                              {kec.kecamatan}
+                              {kec.value}
                             </div>
 
                             {desa
@@ -64,7 +64,7 @@ export function RegionSheet({ data }: RegionSheetProps) {
                                   key={d.id}
                                   className="ml-4 mt-1 text-sm text-muted-foreground"
                                 >
-                                  • {d.desa}
+                                  • {d.value}
                                 </div>
                               ))}
                           </div>

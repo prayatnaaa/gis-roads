@@ -19,22 +19,29 @@ function Home() {
   const isSelected = useLocationStore((state) => state.isSelected);
 
   const [filters, setFilters] = React.useState<{
-    roadType: PlaceValueProps | null;
-    roadCondition: PlaceValueProps | null;
-    existing: PlaceValueProps | null;
+    roadType: PlaceValueProps[];
+    roadCondition: PlaceValueProps[];
+    existing: PlaceValueProps[];
   }>({
-    roadType: null,
-    roadCondition: null,
-    existing: null,
+    roadType: [],
+    roadCondition: [],
+    existing: [],
   });
 
   const filteredRoads = roads?.filter((road) => {
     const matchesType =
-      !filters.roadType || road.jenisjalan_id === filters.roadType.id;
+      filters.roadType.length === 0 ||
+      filters.roadType.some((type) => type.id === road.jenisjalan_id);
+
     const matchesCondition =
-      !filters.roadCondition || road.kondisi_id === filters.roadCondition.id;
+      filters.roadCondition.length === 0 ||
+      filters.roadCondition.some(
+        (condition) => condition.id === road.kondisi_id
+      );
+
     const matchesExisting =
-      !filters.existing || road.eksisting_id === filters.existing.id;
+      filters.existing.length === 0 ||
+      filters.existing.some((exist) => exist.id === road.eksisting_id);
 
     return matchesType && matchesCondition && matchesExisting;
   });
@@ -43,6 +50,8 @@ function Home() {
     filteredRoads?.map((road) => {
       const desaName =
         desa.find((d) => d.id === road.desa_id)?.value || "Unknown Desa";
+
+      console.log(desa);
 
       const roadType =
         road.jenisjalan_id == 1
