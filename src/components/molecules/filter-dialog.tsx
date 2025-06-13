@@ -193,7 +193,33 @@ export function FilterDialog({ onFilter }: FilterDialogProps) {
           </div>
 
           <DialogFooter>
-            <Button type="submit">Apply Filters</Button>
+            <div className="flex justify-end gap-2">
+              {selectedType.length > 0 ||
+              selectedCondition.length > 0 ||
+              selectedExisting.length > 0 ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    console.log("Clearing filters");
+                    setSelectedType([]);
+                    setSelectedCondition([]);
+                    setSelectedExisting([]);
+                    setTempSelectedType([]);
+                    setTempSelectedCondition([]);
+                    setTempSelectedExisting([]);
+                    onFilter({
+                      roadType: [],
+                      roadCondition: [],
+                      existing: [],
+                    });
+                  }}
+                  className="mr-2"
+                >
+                  Clear Filters
+                </Button>
+              ) : null}
+              <Button type="submit">Apply Filters</Button>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>
