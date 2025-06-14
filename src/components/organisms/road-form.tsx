@@ -114,12 +114,7 @@ const RoadForm = ({
 
   React.useEffect(() => {
     if (!initialData) return;
-
-    reset({
-      ...initialData,
-      paths: initialData.paths || paths,
-      length: initialData.length ?? length,
-    });
+    reset(initialData);
 
     const selectedVillage = desa.find((d) => d.id === initialData.village_id);
     const selectedDistrict = kecamatan.find(
@@ -131,7 +126,7 @@ const RoadForm = ({
 
     setDistrictId(selectedDistrict?.id || null);
     setRegencyId(selectedRegency?.id || null);
-  }, [initialData, paths, length, desa, kecamatan, kabupaten, reset]);
+  }, [initialData, desa, kecamatan, kabupaten, reset]);
 
   React.useEffect(() => {
     setValue("paths", paths);
@@ -203,7 +198,6 @@ const RoadForm = ({
               }))}
               selectedId={regencyId || undefined}
               onChange={(selected) => {
-                console.log(selected);
                 setRegencyId(selected.id);
                 setDistrictId(null);
                 setValue("village_id", undefined as any);
@@ -349,7 +343,7 @@ const RoadForm = ({
         <Button
           className="mt-2 hover:cursor-pointer"
           type="button"
-          disabled={isSubmitting}
+          disabled={isSubmitting || paths.length < 2}
           onClick={triggerSubmit}
         >
           {isEdit ? "Update" : "Submit"}

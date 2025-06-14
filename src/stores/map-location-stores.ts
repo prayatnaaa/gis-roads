@@ -15,7 +15,7 @@ export const useLocationStore = create<LocationStore>((set) => ({
   id: "null",
   location: DEFAULT_LOCATION,
   isSelected: false,
-  zoomLevel: 10,
+  zoomLevel: 14,
   setLocation: (lat, lng, id) =>
     set(() => ({
       location: [lat, lng],

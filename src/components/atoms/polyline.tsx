@@ -1,5 +1,5 @@
 import { useMap } from "react-leaflet";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { LatLngLiteral } from "leaflet";
 import L from "leaflet";
 
@@ -11,6 +11,7 @@ export const GeomanPolyline = ({
   initialPath?: LatLngLiteral[];
 }) => {
   const map = useMap();
+  const tempLayerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!map) return;
@@ -23,7 +24,7 @@ export const GeomanPolyline = ({
       drawPolyline: true,
       drawRectangle: false,
       drawCircleMarker: false,
-      editMode: true,
+      editMode: false,
       dragMode: false,
       cutPolygon: false,
       removalMode: true,
@@ -31,19 +32,21 @@ export const GeomanPolyline = ({
       drawText: false,
     });
 
-    let tempLayer: any = null;
+    const onMouseMove = (mouseEvent: L.LeafletMouseEvent) => {
+      const tempLayer = tempLayerRef.current;
+      if (!tempLayer) return;
+
+      const latlngs = tempLayer.getLatLngs();
+      const flatLatLngs = Array.isArray(latlngs[0]) ? latlngs.flat() : latlngs;
+
+      const previewLatLngs = [...flatLatLngs, mouseEvent.latlng];
+      onDraw(previewLatLngs);
+    };
 
     const handleDrawStart = (e: any) => {
       if (e.workingLayer && e.shape === "Line") {
-        tempLayer = e.workingLayer;
-
-        tempLayer.on("pm:draw", () => {
-          const latlngs = tempLayer.getLatLngs();
-          const flatLatLngs = Array.isArray(latlngs[0])
-            ? latlngs.flat()
-            : latlngs;
-          onDraw(flatLatLngs); // Kirim data ke parent setiap ada titik baru
-        });
+        tempLayerRef.current = e.workingLayer;
+        map.on("mousemove", onMouseMove);
       }
     };
 
@@ -54,26 +57,31 @@ export const GeomanPolyline = ({
           latlngs = latlngs.flat();
         }
 
-        console.log(latlngs);
-
         onDraw(latlngs);
         e.layer.remove();
+
+        // Matikan mousemove dan hapus ref
+        map.off("mousemove", onMouseMove);
+        tempLayerRef.current = null;
       }
     };
 
     const handleRemove = (e: any) => {
-      const removedLayer = e.layer;
-      if (removedLayer instanceof L.Polyline) {
+      if (e.layer instanceof L.Polyline) {
         onDraw([]);
       }
     };
 
+    map.on("pm:drawstart", handleDrawStart);
     map.on("pm:create", handleCreate);
     map.on("pm:remove", handleRemove);
-    map.on("pm:drawstart", handleDrawStart);
+
+    map.on("pm:drawend", () => {
+      map.off("mousemove", onMouseMove);
+      tempLayerRef.current = null;
+    });
 
     let editLayer: any = null;
-
     if (initialPath && initialPath.length > 0) {
       editLayer = L.polyline(initialPath).addTo(map);
       editLayer.pm.enable({ allowSelfIntersection: false });
@@ -87,13 +95,12 @@ export const GeomanPolyline = ({
 
     return () => {
       map.pm.removeControls();
+      map.off("pm:drawstart", handleDrawStart);
       map.off("pm:create", handleCreate);
       map.off("pm:remove", handleRemove);
-      map.off("pm:drawstart", handleDrawStart);
-
-      if (editLayer) {
-        map.removeLayer(editLayer);
-      }
+      map.off("pm:drawend");
+      map.off("mousemove", onMouseMove);
+      if (editLayer) map.removeLayer(editLayer);
     };
   }, [map, onDraw, initialPath]);
 

@@ -69,7 +69,12 @@ const EditRoad = () => {
     return total;
   };
 
-  if (!initialData) return <div>Loading...</div>;
+  if (!initialData)
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
 
   const lengthInMeters = Math.round(getPolylineLength(positions));
 

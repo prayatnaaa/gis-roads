@@ -1,5 +1,6 @@
 import {
   MapContainer,
+  Marker,
   Polyline,
   TileLayer,
   Tooltip,
@@ -52,8 +53,9 @@ const HomeMaps = ({ location, roads }: HomeMapsProps) => {
       <ChangeView center={location} />
 
       {roads.length > 0 &&
-        roads.map((data) =>
-          Array.isArray(data.paths) ? (
+        roads.map((data) => {
+          console.log("Rendering road data:", data);
+          return Array.isArray(data.paths) ? (
             <React.Fragment key={data.id}>
               {String(data.id) === selectedLocId && (
                 <>
@@ -119,9 +121,10 @@ const HomeMaps = ({ location, roads }: HomeMapsProps) => {
                   </div>
                 </Tooltip>
               </Polyline>
+              <Marker position={data.paths[0]} />
             </React.Fragment>
-          ) : null
-        )}
+          ) : null;
+        })}
     </MapContainer>
   );
 };

@@ -34,7 +34,7 @@ export function TabularRoadData({
   filterButton,
 }: DataTableProps<RoadTable, unknown>) {
   const selectedId = useLocationStore((state) => state.id);
-  const pageSize = 5;
+  const pageSize = 2;
 
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -78,6 +78,13 @@ export function TabularRoadData({
     const rowIndex = data.findIndex((item) => item.id === id);
     if (rowIndex !== -1) {
       const pageIndex = Math.floor(rowIndex / pageSize);
+
+      if (pageIndex !== table.getState().pagination.pageIndex) {
+        setPagination((prev) => ({
+          ...prev,
+          pageIndex,
+        }));
+      }
       setTimeout(() => {
         table.setPageIndex(pageIndex);
       }, 0);

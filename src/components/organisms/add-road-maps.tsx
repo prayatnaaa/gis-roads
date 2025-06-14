@@ -54,6 +54,14 @@ const AddRoadMaps = () => {
     }
   };
 
+  // React.useEffect(() => {
+  //   if (positions.length === 0) {
+  //     toast("Please draw a line to calculate the length", {
+  //       description: "You can use the drawing tools on the map",
+  //     });
+  //   }
+  // }, [positions]);
+
   return (
     <div className="w-full h-screen flex flex-row">
       <div className="absolute bottom-[40px] right-[40px] z-20">

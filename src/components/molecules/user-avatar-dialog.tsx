@@ -9,31 +9,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogoutDialog } from "./logout-dialog";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/atoms/avatar";
+import { Avatar } from "@/components/atoms/avatar";
+import { SettingsIcon } from "lucide-react";
 
 export function UserAvatarDialog() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar>
-          <AvatarImage
-            sizes="100"
-            src="https://github.com/shadcn.png"
-            alt="@shadcn"
-          />
-          <AvatarFallback>CN</AvatarFallback>
+          <SettingsIcon className="h-6 w-6 hover:cursor-pointer" />
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent collisionPadding={10} className="w-56">
         <DropdownMenuLabel className="font-semibold">
-          My Account
+          Settings
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:cursor-pointer">
-            Profile
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        <DropdownMenuGroup></DropdownMenuGroup>
         <DropdownMenuItem className="hover:cursor-pointer">
           <LogoutDialog />
         </DropdownMenuItem>

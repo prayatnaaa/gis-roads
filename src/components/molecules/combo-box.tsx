@@ -41,7 +41,11 @@ export function Combobox({
       const selected = properties.find((item) => item.id === selectedId);
       if (selected) {
         setValue(selected.value);
+      } else {
+        setValue("");
       }
+    } else {
+      setValue("");
     }
   }, [selectedId, properties]);
 

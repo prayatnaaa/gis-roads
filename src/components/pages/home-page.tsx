@@ -99,7 +99,7 @@ function Home() {
           filterButton={<FilterDialog onFilter={setFilters} />}
         />
 
-        <div className="absolute bottom-0 left-0">
+        <div className="absolute bottom-0">
           {/* <LogoutDialog /> */}
           <UserAvatarDialog />
         </div>
